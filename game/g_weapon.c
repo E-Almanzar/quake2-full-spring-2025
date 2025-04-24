@@ -329,6 +329,8 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 	}
 	else
 	{
+		//Deleting this makes it so it doesnt die when hitting a wall?
+		return;
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_BLASTER);
 		gi.WritePosition (self->s.origin);
@@ -360,7 +362,8 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	VectorCopy (start, bolt->s.old_origin);
 	vectoangles (dir, bolt->s.angles);
 	VectorScale (dir, speed, bolt->velocity);
-	bolt->movetype = MOVETYPE_FLYMISSILE;
+	//bolt->movetype = MOVETYPE_FLYMISSILE;
+	bolt->movetype = MOVETYPE_FLYRICOCHET;
 	bolt->clipmask = MASK_SHOT;
 	bolt->solid = SOLID_BBOX;
 	bolt->s.effects |= effect;
@@ -559,7 +562,104 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 		gi.linkentity (grenade);
 	}
 }
+void sattelite_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf)
+{
+	int		mod;
 
+	//if (other == self->owner)
+		//return;
+
+	if (surf && (surf->flags & SURF_SKY))
+	{
+		G_FreeEdict(self);
+		return;
+	}
+
+	if (self->owner->client)
+		PlayerNoise(self->owner, self->s.origin, PNOISE_IMPACT);
+
+	if (other->takedamage)
+	{
+		if (self->spawnflags & 1)
+			mod = MOD_HYPERBLASTER;
+		else
+			mod = MOD_BLASTER;
+		T_Damage(other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, mod);
+	}
+	else
+	{
+		//Deleting this makes it so it doesnt die when hitting a wall?
+		return;
+	}
+
+	G_FreeEdict(self);
+}
+
+ // CCH: New think function for homing missiles
+ void homing_think(edict_t * ent)
+  {
+	 edict_t * target = NULL;
+	 edict_t * blip = NULL;
+	 vec3_t	targetdir, blipdir;
+	 vec_t	speed;
+	 
+		 while ((blip = findradius(blip, ent->s.origin, 1000)) != NULL)
+		  {
+		 if (!(blip->svflags & SVF_MONSTER) && !blip->client)
+			  continue;
+		 //if (blip == ent->owner)
+			//  continue;
+		 if (!blip->takedamage)
+			  continue;
+		 if (blip->health <= 0)
+			  continue;
+		 if (!visible(ent, blip))
+			  continue;
+		 if (!infront(ent, blip))
+			  continue;
+
+		 VectorSubtract(blip->s.origin, ent->s.origin, blipdir);
+		 blipdir[2]  += 16;
+		 if ((target == NULL) || (VectorLength(blipdir) < VectorLength(targetdir)))
+			  {
+			 target = blip;
+			 VectorCopy(blipdir, targetdir);
+			 }
+		  }
+		 //edict_t* blip = NULL;
+
+		 //ent->think = proxim_think;
+		 while ((blip = findradius(blip, ent->s.origin, 15)) != NULL) {
+			 if (!(blip->svflags & SVF_MONSTER) && !blip->client)
+				 continue;
+			 //if (blip == ent->owner)
+				// continue;
+			 if (!blip->takedamage)
+				 continue;
+			 if (blip->health <= 0)
+				 continue;
+			 if (!visible(ent, blip))
+				 continue;
+			 ent->think = Grenade_Explode;
+			 break;
+		 }
+
+		 if (target != NULL)
+		  {
+		 		// target acquired, nudge our direction toward it
+			 VectorNormalize(targetdir);
+		 VectorScale(targetdir, 0.2, targetdir);
+		 VectorAdd(targetdir, ent->movedir, targetdir);
+		 VectorNormalize(targetdir);
+		 VectorCopy(targetdir, ent->movedir);
+		 vectoangles(targetdir, ent->s.angles);
+		 speed = VectorLength(ent->velocity);
+		 VectorScale(targetdir, speed, ent->velocity);
+		 }
+	 
+		 if (random() < .001) { ent->think = Grenade_Explode; }
+		 ent->nextthink = level.time +  .1;
+	 }
 
 /*
 =================
@@ -571,8 +671,8 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	vec3_t		origin;
 	int			n;
 
-	if (other == ent->owner)
-		return;
+	//if (other == ent->owner)
+		//return;
 
 	if (surf && (surf->flags & SURF_SKY))
 	{
@@ -617,32 +717,59 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	G_FreeEdict (ent);
 }
 
+static void proxim_think(edict_t* ent){
+	edict_t * blip = NULL;
+	
+	ent->think = proxim_think;
+	while ((blip = findradius(blip, ent->s.origin, 100)) != NULL){
+		if (!(blip->svflags & SVF_MONSTER) && !blip->client)
+			continue;
+		if (blip == ent->owner)
+			continue;
+		if (!blip->takedamage)
+			continue;
+		if (blip->health <= 0)
+			continue;
+		if (!visible(ent, blip))
+				continue;
+		ent->think = Grenade_Explode;
+		break;
+	}
+	
+		ent->nextthink = level.time + .1;
+	}
+
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
 {
 	edict_t	*rocket;
+
 
 	rocket = G_Spawn();
 	VectorCopy (start, rocket->s.origin);
 	VectorCopy (dir, rocket->movedir);
 	vectoangles (dir, rocket->s.angles);
 	VectorScale (dir, speed, rocket->velocity);
-	rocket->movetype = MOVETYPE_FLYMISSILE;
+	//rocket->movetype = MOVETYPE_FLYMISSILE;
+	rocket->movetype = MOVETYPE_FLYRICOCHET;
 	rocket->clipmask = MASK_SHOT;
 	rocket->solid = SOLID_BBOX;
 	rocket->s.effects |= EF_ROCKET;
 	VectorClear (rocket->mins);
 	VectorClear (rocket->maxs);
-	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+	//rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+	rocket->s.modelindex = gi.modelindex("models/objects/satellite/tris.md2");
 	rocket->owner = self;
-	rocket->touch = rocket_touch;
-	rocket->nextthink = level.time + 8000/speed;
-	rocket->think = G_FreeEdict;
+	//rocket->touch = rocket_touch;
+	rocket->touch = sattelite_touch;
+	rocket->nextthink = .2;
+	//rocket->think = G_FreeEdict;
+	//rocket->think = proxim_think;
+	rocket->think = homing_think;
 	rocket->dmg = damage;
 	rocket->radius_dmg = radius_damage;
 	rocket->dmg_radius = damage_radius;
 	rocket->s.sound = gi.soundindex ("weapons/rockfly.wav");
 	rocket->classname = "rocket";
-
 	if (self->client)
 		check_dodge (self, rocket->s.origin, dir, speed);
 

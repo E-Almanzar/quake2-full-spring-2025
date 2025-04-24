@@ -1,0 +1,113 @@
+﻿  gl_draw.c
+  gl_image.c
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(118,12): warning C4389: '!=': signed/unsigned mismatch
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(1254,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(1269,8): warning C4456: declaration of 'i' hides previous local declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(1236,8):
+      see declaration of 'i'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(1446,25): warning C4057: 'function': 'const GLuint *' differs in indirection to slightly different base types from 'int *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(1567,25): warning C4057: 'function': 'const GLuint *' differs in indirection to slightly different base types from 'int *'
+  gl_light.c
+  gl_mesh.c
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_mesh.c(177,11): warning C4456: declaration of 'l' hides previous local declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_mesh.c(92,9):
+      see declaration of 'l'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_mesh.c(306,49): warning C4100: 'posenum': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_mesh.c(718,15): warning C4210: nonstandard extension used: function given file scope
+  gl_model.c
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_model.c(222,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  gl_rmain.c
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1067,30): warning C4057: 'function': 'int *' differs in indirection to slightly different base types from 'unsigned int *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1067,42): warning C4057: 'function': 'int *' differs in indirection to slightly different base types from 'unsigned int *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1078,32): warning C4057: 'function': 'int *' differs in indirection to slightly different base types from 'unsigned int *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1078,44): warning C4057: 'function': 'int *' differs in indirection to slightly different base types from 'unsigned int *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1089,31): warning C4057: 'function': 'int *' differs in indirection to slightly different base types from 'unsigned int *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1089,43): warning C4057: 'function': 'int *' differs in indirection to slightly different base types from 'unsigned int *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1153,26): warning C4057: '=': 'const char *' differs in indirection to slightly different base types from 'const GLubyte *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1155,28): warning C4057: '=': 'const char *' differs in indirection to slightly different base types from 'const GLubyte *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1157,27): warning C4057: '=': 'const char *' differs in indirection to slightly different base types from 'const GLubyte *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1159,30): warning C4057: '=': 'const char *' differs in indirection to slightly different base types from 'const GLubyte *'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1162,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1165,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1251,20): warning C4152: nonstandard extension, function/data pointer conversion in expression
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1252,22): warning C4152: nonstandard extension, function/data pointer conversion in expression
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1310,23): warning C4152: nonstandard extension, function/data pointer conversion in expression
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1311,25): warning C4152: nonstandard extension, function/data pointer conversion in expression
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1163,2): warning C4996: 'strlwr': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strlwr. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1166,2): warning C4996: 'strlwr': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strlwr. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1419,4): warning C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _putenv. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1421,4): warning C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _putenv. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1651,10): warning C4133: '=': incompatible types - from 'int (__cdecl *)(void *,void *)' to 'qboolean (__cdecl *)(void *,void *)'
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1674,2): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1686,2): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  gl_rmisc.c
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmisc.c(115,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmisc.c(122,7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmisc.c(154,6): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  gl_rsurf.c
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rsurf.c(1562,42): warning C4100: 'm': unreferenced formal parameter
+  gl_warp.c
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_warp.c(631,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  glw_imp.c
+C:\Git\Quake 2\quake2-full-spring-2025\win32\glw_imp.c(51,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\win32\glw_imp.c(51,18): warning C4057: 'function': 'const char *' differs in indirection to slightly different base types from 'const GLubyte *'
+C:\Git\Quake 2\quake2-full-spring-2025\win32\glw_imp.c(52,2): warning C4996: 'strlwr': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strlwr. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\win32\glw_imp.c(357,7): warning C4996: 'GetVersionExA': was declared deprecated
+C:\Git\Quake 2\quake2-full-spring-2025\win32\glw_imp.c(594,7): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _stricmp. See online help for details.
+  q_shared.c
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(266,40): warning C4100: 'f': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(312,7): warning C4459: declaration of 'i' hides global declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(305,7):
+      see declaration of 'i'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(315,9): warning C4459: declaration of 'corners' hides global declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(306,9):
+      see declaration of 'corners'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(418,86): warning C4100: 'p': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(418,62): warning C4100: 'emaxs': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(418,48): warning C4100: 'emins': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(658,7): warning C4459: declaration of 'i' hides global declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(305,7):
+      see declaration of 'i'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(764,7): warning C4459: declaration of 'i' hides global declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(305,7):
+      see declaration of 'i'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(841,7): warning C4459: declaration of 'i' hides global declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(305,7):
+      see declaration of 'i'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(876,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(897,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(923,2): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(1056,2): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(1163,7): warning C4459: declaration of 'i' hides global declaration
+      C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(305,7):
+      see declaration of 'i'
+  
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(1230,8): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(1234,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c(1334,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  q_shwin.c
+  qgl_win.c
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3152,63): warning C4057: '=': 'GLuint (__stdcall *)(GLsizei)' differs in indirection to slightly different base types from 'FARPROC'
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3157,63): warning C4057: '=': 'GLenum (__stdcall *)(void)' differs in indirection to slightly different base types from 'FARPROC'
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3039,3): warning C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _putenv. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3041,3): warning C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _putenv. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3436,14): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3438,4): warning C4996: 'asctime': This function or variable may be unsafe. Consider using asctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3441,23): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c(3443,39): warning C4996: 'asctime': This function or variable may be unsafe. Consider using asctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c(1341,1): warning C4715: 'R_Init': not all control paths return a value
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(668,1): warning C4701: potentially uninitialized local variable 'blue' used
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(667,1): warning C4701: potentially uninitialized local variable 'green' used
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(666,1): warning C4701: potentially uninitialized local variable 'red' used
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(669,1): warning C4701: potentially uninitialized local variable 'alphabyte' used
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c(1223,1): warning C4715: 'GL_Upload8': not all control paths return a value
+     Creating library .\..\release\ref_gl.lib and object .\..\release\ref_gl.exp
+  ref_gl.vcxproj -> C:\Git\Quake 2\quake2-full-spring-2025\release\ref_gl.dll

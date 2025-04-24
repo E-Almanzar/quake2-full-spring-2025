@@ -1,0 +1,13 @@
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_draw.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_draw.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_image.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_image.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_light.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_light.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_mesh.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_mesh.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_model.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_model.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmain.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_rmain.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rmisc.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_rmisc.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_rsurf.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_rsurf.obj
+C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\gl_warp.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\gl_warp.obj
+C:\Git\Quake 2\quake2-full-spring-2025\win32\glw_imp.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\glw_imp.obj
+C:\Git\Quake 2\quake2-full-spring-2025\game\q_shared.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\q_shared.obj
+C:\Git\Quake 2\quake2-full-spring-2025\win32\q_shwin.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\q_shwin.obj
+C:\Git\Quake 2\quake2-full-spring-2025\win32\qgl_win.c;C:\Git\Quake 2\quake2-full-spring-2025\ref_gl\release\qgl_win.obj

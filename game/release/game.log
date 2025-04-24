@@ -1,0 +1,9 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(520,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  g_weapon.c
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(458,68): warning C4100: 'plane': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(334,1): warning C4702: unreachable code
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(338,1): warning C4702: unreachable code
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(340,1): warning C4702: unreachable code
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(341,1): warning C4702: unreachable code
+     Creating library .\..\release\gamex86.lib and object .\..\release\gamex86.exp
+  game.vcxproj -> C:\Git\Quake 2\quake2-full-spring-2025\game\release\gamex86.dll

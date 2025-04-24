@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 
+//EALM? Do we need to declare?
+void func_explosive_explode(edict_t* self, edict_t* inflictor, edict_t* attacker, int damage, vec3_t point);
+void SP_misc_explobox(edict_t* self);
 
 /*QUAKED func_group (0 0 0) ?
 Used to group brushes together just for editor convenience.
@@ -93,7 +96,7 @@ void gib_think (edict_t *self)
 {
 	self->s.frame++;
 	self->nextthink = level.time + FRAMETIME;
-
+	
 	if (self->s.frame == 10)
 	{
 		self->think = G_FreeEdict;
@@ -109,7 +112,7 @@ void gib_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 		return;
 
 	self->touch = NULL;
-
+	
 	if (plane)
 	{
 		gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/fhit3.wav"), 1, ATTN_NORM, 0);
@@ -142,24 +145,27 @@ void ThrowGib (edict_t *self, char *gibname, int damage, int type)
 
 	gib = G_Spawn();
 
-	VectorScale (self->size, 0.5, size);
+	VectorScale (self->size, 1, size);
 	VectorAdd (self->absmin, size, origin);
 	gib->s.origin[0] = origin[0] + crandom() * size[0];
 	gib->s.origin[1] = origin[1] + crandom() * size[1];
 	gib->s.origin[2] = origin[2] + crandom() * size[2];
 
 	gi.setmodel (gib, gibname);
-	gib->solid = SOLID_NOT;
+	//gib->solid = SOLID_NOT;
+	gib->solid = SOLID_BBOX;
 	gib->s.effects |= EF_GIB;
-	gib->flags |= FL_NO_KNOCKBACK;
+	//gib->flags |= FL_NO_KNOCKBACK;
+	//gib->team = team
 	gib->takedamage = DAMAGE_YES;
 	gib->die = gib_die;
-
+	//T_RadiusDamage(self, self, 100, NULL, self->dmg + 40, MOD_BARREL);
 	if (type == GIB_ORGANIC)
 	{
-		gib->movetype = MOVETYPE_TOSS;
+		//gib->movetype = MOVETYPE_TOSS;
+		gib->movetype = MOVETYPE_FLYRICOCHET;
 		gib->touch = gib_touch;
-		vscale = 0.5;
+		vscale = 5;
 	}
 	else
 	{
@@ -176,7 +182,8 @@ void ThrowGib (edict_t *self, char *gibname, int damage, int type)
 
 	gib->think = G_FreeEdict;
 	gib->nextthink = level.time + 10 + random()*10;
-
+	//EALM?
+	
 	gi.linkentity (gib);
 }
 

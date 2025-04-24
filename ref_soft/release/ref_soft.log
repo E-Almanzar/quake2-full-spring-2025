@@ -1,0 +1,55 @@
+﻿  Performing Custom Build Tools
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  Performing Custom Build Tools
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Performing Custom Build Tools
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Performing Custom Build Tools
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Performing Custom Build Tools
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Performing Custom Build Tools
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Performing Custom Build Tools
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Performing Custom Build Tools
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+  Performing Custom Build Tools
+  Microsoft (R) Macro Assembler Version 14.43.34808.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+   Assembling: C:\Git\Quake
+MASM : fatal error A1000: cannot open file : C:\Git\Quake
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: Custom build for 'r_aclipa.asm;r_draw16.asm;r_drawa.asm;r_edgea.asm;r_polysa.asm;r_scana.asm;r_spr8.asm;r_surf8.asm;r_varsa.asm' exited with code 1.

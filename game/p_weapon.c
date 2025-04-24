@@ -28,8 +28,11 @@ static byte		is_silenced;
 
 
 void weapon_grenade_fire (edict_t *ent, qboolean held);
-
-
+void fire_design(edict_t* self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper);
+void fire_flat_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, int speed);
+void fire_up_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, float stepValue);
+int design = 0;
+//EALM
 static void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
 	vec3_t	_distance;
@@ -829,8 +832,52 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	//EALM
+	fire_design(ent, start, forward, damage, 1000, effect, hyper);
+	/*fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
 
+	start[0] += right[0] *20;
+	start[1] += right[1] * 20;
+	start[2] += right[2] * 20;
+	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+	
+	start[0] -= right[0] * 40;
+	start[1] -= right[1] * 40;
+	start[2] -= right[2] * 40; 
+	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+
+	start[0] += right[0] * 60;
+	start[1] += right[1] * 60;
+	start[2] += right[2] * 60;
+	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+
+	start[0] -= right[0] * 80;
+	start[1] -= right[1] * 80;
+	start[2] -= right[2] * 80;
+	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+
+	start[0] += right[0] * 100;
+	start[1] += right[1] * 100;
+	start[2] += right[2] * 100;
+	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+
+	start[0] -= right[0] * 120;
+	start[1] -= right[1] * 120;
+	start[2] -= right[2] * 120;
+	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+	*/
+	/*
+	vec3_t newdir;
+	newdir[0] = forward[0];
+	newdir[1] = forward[1]+30;
+	newdir[2] = forward[2]+30;
+	fire_blaster(ent, start, newdir, damage, 1000, effect, hyper);
+
+	newdir[0] = forward[0];
+	newdir[1] = forward[1] -60;
+	newdir[2] = forward[2] -60;
+	fire_blaster(ent, start, newdir, damage, 1000, effect, hyper);
+	*/
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1209,10 +1256,20 @@ void weapon_shotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	if (deathmatch->value)
+
+	/*if (deathmatch->value)
 		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
 	else
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);*/
+	//EALM Shotgun
+	for(int i = 0; i < 15; i++){
+		ThrowGib(ent, "models/objects/gibs/sm_meat/tris.md2", damage, NULL);
+		//ThrowGib(ent, "models/objects/satellite/tris.md2", damage, NULL);
+		//ThrowGib(ent, "models/monsters/bitch/tris.md2", damage, NULL);
+		//models/objects/black/tris.md2
+	}
+	//fire_shotgun(ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+	
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1430,5 +1487,146 @@ void Weapon_BFG (edict_t *ent)
 	Weapon_Generic (ent, 8, 32, 55, 58, pause_frames, fire_frames, weapon_bfg_fire);
 }
 
+void fire_design(edict_t* ent, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper) {
+	//EALM for firing the blaster with different patterns
+	 //0 is straight?
+	if (!ent) {
+		return;
+	}
 
+	vec3_t forward, right, pattern, avgf, avgr;
+	int flip = 0; //guy to manually toggle between left and right?
+	float yaw;
+	//design = 1;
+	//design = 3;
+
+	if (design == 0) {
+		//fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+
+		fire_flat_eight(ent, start, effect, hyper, 50);
+		design++;
+	}
+	else if (design == 1) {
+		fire_flat_eight(ent, start, effect, hyper, 30);
+		start[2] += 10;
+		fire_flat_eight(ent, start, effect, hyper, 30);
+		start[2] -= 20;
+		fire_flat_eight(ent, start, effect, hyper, 30);
+		design++;
+	}
+	else if (design == 2) {//Flat
+
+		fire_flat_eight(ent, start, effect, hyper, 10);
+		start[1] += 10;
+		fire_flat_eight(ent, start, effect, hyper, 10);
+		//start[2] += 10;
+		//fire_flat_eight(ent, start, effect, hyper);
+		start[1] -= 20;
+		fire_flat_eight(ent, start, effect, hyper, 30);
+		//start[2] -= 20;
+		//fire_flat_eight(ent, start, effect, hyper);
+		design++;
+	}
+	else if (design == 3) {
+		//3 different starts, all lower than the others and moved horizonatlly 
+		start[0];
+		start[2] -= 10;
+		for (int i = 1; i < 4; i++) {
+			start[2] += 10*i;
+			fire_up_eight(ent, start, effect, hyper, (.33*i));
+		}
+		//fire_up_eight(ent, start, effect, hyper);
+		design = 0;
+	}
+
+}
+
+void fire_flat_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, int speed) {
+	vec3_t pattern;
+	int damage = 50;
+	//int speed = 10;
+	//AngleVectors(ent->client->v_angle, forward, right, NULL);
+	effect = EF_BLASTER;
+	
+
+	pattern[0] = 1; //Forward
+	pattern[1] = 0;
+	pattern[2] = 0;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+
+	pattern[0] = .5; //Forward Right
+	pattern[1] = .5;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = 0; //Right
+	pattern[1] = 1;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = -.5; //back Right
+	pattern[1] = .5;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = -1; //Back
+	pattern[1] = 0;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = -.5; //Back left
+	pattern[1] = -.5;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = 0; //Left
+	pattern[1] = -.1;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = .5; //Forward Left
+	pattern[1] = -.5;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+}
+void fire_up_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, float stepValue) {
+	vec3_t pattern;
+	int damage = 50;
+	int speed = 1000;
+	//float stepValue = .5;
+
+	//AngleVectors(ent->client->v_angle, forward, right, NULL);
+	effect = EF_BLASTER;
+
+
+	pattern[0] = 1; //Forward
+	pattern[1] = 0;
+	pattern[2] = -1;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+
+	pattern[0] = stepValue; //Forward Right
+	pattern[1] = stepValue;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = 0; //Right
+	pattern[1] = 1;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = -1* stepValue; //back Right
+	pattern[1] = stepValue;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = -1; //Back
+	pattern[1] = 0;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = -stepValue; //Back left
+	pattern[1] = -stepValue;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = 0; //Left
+	pattern[1] = -.1;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+	pattern[0] = stepValue; //Forward Left
+	pattern[1] = -stepValue;
+	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+}
 //======================================================================
