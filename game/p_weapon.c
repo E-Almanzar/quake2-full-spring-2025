@@ -1262,14 +1262,16 @@ void weapon_shotgun_fire (edict_t *ent)
 	else
 		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);*/
 	//EALM Shotgun
-	for(int i = 0; i < 15; i++){
-		ThrowGib(ent, "models/objects/gibs/sm_meat/tris.md2", damage, NULL);
+	/*for (int i = 0; i < 15; i++) {
+		ThrowNotGib(ent, "models/objects/gibs/sm_meat/tris.md2", damage, NULL);
 		//ThrowGib(ent, "models/objects/satellite/tris.md2", damage, NULL);
 		//ThrowGib(ent, "models/monsters/bitch/tris.md2", damage, NULL);
 		//models/objects/black/tris.md2
-	}
+
+	}*/
 	//fire_shotgun(ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
-	
+	float timer = ent->client->grenade_time - level.time;
+	fire_meatball(ent, start, forward,  damage,  10, 0);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1295,7 +1297,40 @@ void Weapon_Shotgun (edict_t *ent)
 
 void weapon_supershotgun_fire (edict_t *ent)
 {
-	vec3_t		start;
+	vec3_t	offset;
+	vec3_t	forward, right;
+	vec3_t	start;
+	int		damage = 120;
+	float	radius;
+
+	radius = damage + 40;
+	if (is_quad)
+		damage *= 4;
+
+	VectorSet(offset, 8, 8, ent->viewheight - 8);
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+
+	VectorScale(forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	//EALM Shotgun Grenade?
+	int speed = 500;
+	fire_grenade(ent, start, forward, damage, speed, 2.5, radius*10);
+
+
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_GRENADE | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+
+	//PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+	/*vec3_t		start;
 	vec3_t		forward, right;
 	vec3_t		offset;
 	vec3_t		v;
@@ -1320,10 +1355,20 @@ void weapon_supershotgun_fire (edict_t *ent)
 	v[YAW]   = ent->client->v_angle[YAW] - 5;
 	v[ROLL]  = ent->client->v_angle[ROLL];
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	//fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 	v[YAW]   = ent->client->v_angle[YAW] + 5;
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	//fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+
+	//EALM Super Meatball?
+	float timer = ent->client->grenade_time - level.time;
+	//fire_meatball(ent, start, forward, damage, 10, 1);
+	//fire_skull(ent, start, forward, damage, 10, 10, timer, 10);
+	//bombstart(ent, "models/monsters/bitch/tris.md2", 100);
+	
+	//just make it a grenade launcher lol?
+	weapon_grenadelauncher_fire(ent);
+
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1332,10 +1377,10 @@ void weapon_supershotgun_fire (edict_t *ent)
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	ent->client->ps.gunframe++;
-	PlayerNoise(ent, start, PNOISE_WEAPON);
+	//PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-		ent->client->pers.inventory[ent->client->ammo_index] -= 2;
+		ent->client->pers.inventory[ent->client->ammo_index] -= 2;*/
 }
 
 void Weapon_SuperShotgun (edict_t *ent)
@@ -1630,3 +1675,6 @@ void fire_up_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, float
 
 }
 //======================================================================
+
+//Grenade touch, Grenade explode for gibbing?
+

@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include "g_local.h"
 
+//EALM Super Meatball Global Fellow
+int supermeatballcount = 0;
 
 /*
 =================
@@ -485,7 +487,7 @@ static void Grenade_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurfa
 	ent->enemy = other;
 	Grenade_Explode (ent);
 }
-
+void rocket_touch(edict_t* ent, edict_t* other, cplane_t* plane, csurface_t* surf);
 void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
 {
 	edict_t	*grenade;
@@ -501,20 +503,35 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 	VectorMA (grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
 	VectorMA (grenade->velocity, crandom() * 10.0, right, grenade->velocity);
 	VectorSet (grenade->avelocity, 300, 300, 300);
-	grenade->movetype = MOVETYPE_BOUNCE;
+	//grenade->movetype = MOVETYPE_BOUNCE;
+	grenade->movetype = MOVETYPE_FLY;
 	grenade->clipmask = MASK_SHOT;
 	grenade->solid = SOLID_BBOX;
-	grenade->s.effects |= EF_GRENADE;
+	
 	VectorClear (grenade->mins);
 	VectorClear (grenade->maxs);
-	grenade->s.modelindex = gi.modelindex ("models/objects/grenade/tris.md2");
+	if(speed == 500){
+		//EALM
+		grenade->velocity[2] = 0;
+		grenade->s.modelindex = gi.modelindex("models/ships/viper/tris.md2");
+		//grenade->s.modelindex = gi.modelindex("models/objects/black/tris.md2"); WOAH black is huge!
+		//models/monsters/parasite/tip
+		grenade->s.effects |= EF_BLASTER;
+	}
+	else {
+		grenade->s.modelindex = gi.modelindex("models/objects/grenade/tris.md2");
+		grenade->s.effects |= EF_GRENADE;
+	}
 	grenade->owner = self;
-	grenade->touch = Grenade_Touch;
+	//grenade->touch = Grenade_Touch;
+	grenade->touch = rocket_touch;
 	grenade->nextthink = level.time + timer;
 	grenade->think = Grenade_Explode;
 	grenade->dmg = damage;
 	grenade->dmg_radius = damage_radius;
 	grenade->classname = "grenade";
+	
+
 
 	gi.linkentity (grenade);
 }
@@ -775,8 +792,8 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 
 	gi.linkentity (rocket);
 }
-
-
+void bfg_think(edict_t* self); void bfg_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf);
+void mybfg_think(edict_t* self);void mybfg_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf);
 /*
 =================
 fire_rail
@@ -790,12 +807,12 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	edict_t		*ignore;
 	int			mask;
 	qboolean	water;
-
+	
 	VectorMA (start, 8192, aimdir, end);
 	VectorCopy (start, from);
 	ignore = self;
 	water = false;
-	mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;
+	mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;/*
 	while (ignore)
 	{
 		tr = gi.trace (from, NULL, NULL, end, ignore, mask);
@@ -836,9 +853,110 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	}
 
 	if (self->client)
-		PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
-}
+		PlayerNoise(self, tr.endpos, PNOISE_IMPACT);*/
+	//EALM
+	edict_t * bfg;
 
+	bfg = G_Spawn();
+	VectorCopy(start, bfg->s.origin);
+	VectorCopy(aimdir, bfg->movedir);
+	vectoangles(aimdir, bfg->s.angles);
+	VectorScale(aimdir, 50, bfg->velocity);
+	bfg->movetype = MOVETYPE_FLYMISSILE;
+	bfg->clipmask = MASK_SHOT;
+	bfg->solid = SOLID_BBOX;
+	bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
+	VectorClear(bfg->mins);
+	VectorClear(bfg->maxs);
+	bfg->s.modelindex = gi.modelindex("sprites/s_bfg1.sp2");
+	bfg->owner = self;
+	bfg->touch = mybfg_touch;
+	bfg->nextthink = level.time + 8000 / 50;
+	bfg->think = G_FreeEdict;
+	bfg->radius_dmg = damage;
+	bfg->dmg_radius = 500;
+	bfg->classname = "bfg blast";
+	bfg->s.sound = gi.soundindex("weapons/bfg__l1a.wav");
+
+	bfg->think = bfg_think;
+	bfg->nextthink = level.time + FRAMETIME;
+	bfg->teammaster = bfg;
+	bfg->teamchain = NULL;
+
+	if (self->client)
+		check_dodge(self, bfg->s.origin, aimdir, 50);
+
+	gi.linkentity(bfg);
+}//EALM rail to bfg? //set cheats 1
+
+void mybfg_think(edict_t* self)
+{
+	edict_t* ent = NULL, * ignore;
+	vec3_t	point,dir,start,end;
+	int	dmg = 10;
+	trace_t	tr;
+
+	while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
+	{
+		if (ent == self)
+			continue;
+		if (ent == self->owner)
+			continue;
+		if (!ent->takedamage)
+			continue;
+
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+			continue;
+
+		VectorMA(ent->absmin, 0.5, ent->size, point);
+		VectorSubtract(point, self->s.origin, dir);
+		VectorNormalize(dir);
+
+		ignore = self;
+		VectorCopy(self->s.origin, start);
+		VectorMA(start, 2048, dir, end);
+		while (1)
+		{
+			tr = gi.trace(start, NULL, NULL, end, ignore, CONTENTS_SOLID | CONTENTS_MONSTER | CONTENTS_DEADMONSTER);
+
+			if (!tr.ent)
+				break;
+
+			// hurt it if we can
+			if ((tr.ent->takedamage) && !(tr.ent->flags & FL_IMMUNE_LASER) && (tr.ent != self->owner))
+				T_Damage(tr.ent, self, self->owner, dir, tr.endpos, vec3_origin, dmg, 1, DAMAGE_ENERGY, MOD_BFG_LASER);
+
+			// if we hit something that's not a monster or player we're done
+			if (!(tr.ent->svflags & SVF_MONSTER) && (!tr.ent->client))
+			{
+				gi.WriteByte(svc_temp_entity);
+				gi.WriteByte(TE_LASER_SPARKS);
+				gi.WriteByte(4);
+				gi.WritePosition(tr.endpos);
+				gi.WriteDir(tr.plane.normal);
+				gi.WriteByte(self->s.skinnum);
+				gi.multicast(tr.endpos, MULTICAST_PVS);
+				break;
+			}
+
+			//ignore = tr.ent;
+			VectorCopy(tr.endpos, start);
+		}
+
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_LASER);
+		gi.WritePosition(self->s.origin);
+		gi.WritePosition(tr.endpos);
+		gi.multicast(self->s.origin, MULTICAST_PHS);
+	}
+
+	self->nextthink = level.time + FRAMETIME;
+}
+void mybfg_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf)
+{
+	ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, NULL);
+	return;
+}
 
 /*
 =================
@@ -1040,4 +1158,280 @@ void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, f
 		check_dodge (self, bfg->s.origin, dir, speed);
 
 	gi.linkentity (bfg);
+}
+
+//EALM
+void meatball_think(edict_t* self)
+{
+	edict_t* ent;
+	edict_t* ignore;
+	vec3_t	point;
+	vec3_t	dir;
+	vec3_t	start;
+	vec3_t	end;
+	int		dmg;
+	trace_t	tr;
+
+	if (deathmatch->value)
+		dmg = 5;
+	else
+		dmg = 10;
+
+	ent = NULL;
+	while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
+	{
+		if (ent == self)
+			continue;
+
+		if (ent == self->owner)
+			continue;
+
+		if (!ent->takedamage)
+			continue;
+
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+			continue;
+
+		VectorMA(ent->absmin, 0.5, ent->size, point);
+
+		VectorSubtract(point, self->s.origin, dir);
+		VectorNormalize(dir);
+
+		ignore = self;
+		VectorCopy(self->s.origin, start);
+		VectorMA(start, 2048, dir, end);
+		int i = 0;
+		while (i < 150)
+		{
+			tr = gi.trace(start, NULL, NULL, end, ignore, CONTENTS_SOLID | CONTENTS_MONSTER | CONTENTS_DEADMONSTER);
+
+			if (!tr.ent)
+				break;
+
+			// hurt it if we can
+			if ((tr.ent->takedamage) && !(tr.ent->flags & FL_IMMUNE_LASER) && (tr.ent != self->owner))
+				T_Damage(tr.ent, self, self->owner, dir, tr.endpos, vec3_origin, 3, -50, DAMAGE_ENERGY, MOD_BFG_LASER);
+
+			// if we hit something that's not a monster or player we're done
+			if (!(tr.ent->svflags & SVF_MONSTER) && (!tr.ent->client))
+			{
+				gi.WriteByte(svc_temp_entity);
+				gi.WriteByte(TE_LASER_SPARKS);
+				gi.WriteByte(4);
+				gi.WritePosition(tr.endpos);
+				gi.WriteDir(tr.plane.normal);
+				gi.WriteByte(self->s.skinnum);
+				gi.multicast(tr.endpos, MULTICAST_PVS);
+				break;
+			}
+
+			ignore = tr.ent;
+			VectorCopy(tr.endpos, start);
+		}
+		
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_LASER);
+		//gi.WriteByte(TE_MONSTER_HEATBEAM);
+		gi.WritePosition(self->s.origin);
+		gi.WritePosition(tr.endpos);
+		gi.multicast(self->s.origin, MULTICAST_PHS);
+		i++;
+	}
+
+	self->nextthink = level.time + FRAMETIME+1;
+}
+
+void meatball_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf)
+{
+	int		mod;
+
+	if (other == self->owner)
+		return;
+
+	if (surf && (surf->flags & SURF_SKY))
+	{
+		G_FreeEdict(self);
+		return;
+	}
+
+	if (self->owner->client)
+		PlayerNoise(self->owner, self->s.origin, PNOISE_IMPACT);
+
+	if (other->takedamage)
+	{
+		if (self->spawnflags & 1)
+			mod = MOD_HYPERBLASTER;
+		else
+			mod = MOD_BLASTER;
+		T_Damage(other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, mod);
+	}
+	else
+	{
+		//Deleting this makes it so it doesnt die when hitting a wall?
+		return;
+	}
+
+	G_FreeEdict(self);
+}
+
+
+void super_meatball_think(edict_t* self)
+{
+	edict_t* ent;
+	edict_t* ignore;
+	vec3_t	point;
+	vec3_t	dir;
+	vec3_t	start;
+	vec3_t	end;
+	int		dmg;
+	trace_t	tr;
+
+	if (deathmatch->value)
+		dmg = 5;
+	else
+		dmg = 10;
+
+	ent = NULL;
+
+
+	ThrowNotGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, NULL);
+	//fire_skull(ent);
+
+	/*while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
+	{
+		if (ent == self)
+			continue;
+
+		if (ent == self->owner)
+			continue;
+
+		if (!ent->takedamage)
+			continue;
+
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+			continue;
+
+		VectorMA(ent->absmin, 0.5, ent->size, point);
+
+		VectorSubtract(point, self->s.origin, dir);
+		VectorNormalize(dir);
+
+		ignore = self;
+		VectorCopy(self->s.origin, start);
+		VectorMA(start, 2048, dir, end);
+		int i = 0;
+		while (i < 150)
+		{
+			tr = gi.trace(start, NULL, NULL, end, ignore, CONTENTS_SOLID | CONTENTS_MONSTER | CONTENTS_DEADMONSTER);
+
+			if (!tr.ent)
+				break;
+
+			// EALM Super Meaball recursion?
+			if ((tr.ent->takedamage) && !(tr.ent->flags & FL_IMMUNE_LASER) && (tr.ent != self->owner)) {
+				//T_Damage(tr.ent, self, self->owner, dir, tr.endpos, vec3_origin, 3, -50, DAMAGE_ENERGY, MOD_BFG_LASER);
+
+
+
+
+			}
+			start[0] = start[0] + crandom();
+			start[1] = start[1] + crandom();
+			start[2] = start[2] + crandom();
+
+			/*if (supermeatballcount <  5) {
+				fire_rocket(ent, start, end, 10, 650, 256, 1);
+				fire_meatball(ent, start, end, 50, 10, 256, 1);
+				supermeatballcount++;
+			}
+			else {
+				fire_meatball(ent, start, end, 50, 10, 256, 0);
+			}*
+			// if we hit something that's not a monster or player we're done
+			if (!(tr.ent->svflags & SVF_MONSTER) && (!tr.ent->client))
+			{
+				gi.WriteByte(svc_temp_entity);
+				gi.WriteByte(TE_LASER_SPARKS);
+				gi.WriteByte(4);
+				gi.WritePosition(tr.endpos);
+				gi.WriteDir(tr.plane.normal);
+				gi.WriteByte(self->s.skinnum);
+				gi.multicast(tr.endpos, MULTICAST_PVS);
+				break;
+			}
+
+			ignore = tr.ent;
+			VectorCopy(tr.endpos, start);
+		}
+
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_LASER);
+		//gi.WriteByte(TE_MONSTER_HEATBEAM);
+		gi.WritePosition(self->s.origin);
+		gi.WritePosition(tr.endpos);
+		gi.multicast(self->s.origin, MULTICAST_PHS);
+		i++;
+	}*/
+
+	supermeatballcount++;
+	if(supermeatballcount > 15){
+		G_FreeEdict(self);
+		supermeatballcount--;
+	}
+	self->nextthink = level.time + FRAMETIME + 1;
+}
+void fire_meatball(edict_t* self, vec3_t start, vec3_t aimdir, int damage, int speed, float damage_radius, int isSuper)
+{
+	edict_t* bolt;
+	trace_t	tr;
+
+	VectorNormalize(aimdir);
+
+	bolt = G_Spawn();
+	bolt->svflags = SVF_DEADMONSTER;
+	// yes, I know it looks weird that projectiles are deadmonsters
+	// what this means is that when prediction is used against the object
+	// (blaster/hyperblaster shots), the player won't be solid clipped against
+	// the object.  Right now trying to run into a firing hyperblaster
+	// is very jerky since you are predicted 'against' the shots.
+	VectorCopy(start, bolt->s.origin);
+	VectorCopy(start, bolt->s.old_origin);
+	vectoangles(aimdir, bolt->s.angles);
+	VectorScale(aimdir, speed, bolt->velocity);
+	//bolt->movetype = MOVETYPE_FLYMISSILE;
+	bolt->movetype = MOVETYPE_FLYRICOCHET;
+	bolt->clipmask = MASK_SHOT;
+	bolt->solid = SOLID_BBOX;
+	bolt->s.effects |= EF_BLASTER;
+	VectorClear(bolt->mins);
+	VectorClear(bolt->maxs);
+	bolt->s.modelindex = gi.modelindex("models/objects/gibs/sm_meat/tris.md2");
+	//bolt->s.sound = gi.soundindex("misc/lasfly.wav");
+	bolt->owner = self;
+	bolt->touch = meatball_touch;
+	//bolt->nextthink = level.time + 200;
+	//bolt->think = G_FreeEdict;
+	bolt->nextthink = level.time + FRAMETIME+1;
+	if (isSuper){
+		//bolt->think = super_meatball_think;
+		bolt->think = meatball_think;
+	}
+	else{
+		bolt->think = meatball_think;
+	}
+		bolt->dmg = damage;
+	bolt->classname = "bolt";
+
+	gi.linkentity(bolt);
+
+	if (self->client)
+		check_dodge(self, bolt->s.origin, aimdir, speed);
+
+	tr = gi.trace(self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
+	if (tr.fraction < 1.0)
+	{
+		VectorMA(bolt->s.origin, -10, aimdir, bolt->s.origin);
+		bolt->touch(bolt, tr.ent, NULL, NULL);
+	}
+	G_Spawn();
 }

@@ -705,6 +705,10 @@ void SV_Physics_Toss (edict_t *ent)
 	&& ent->movetype != MOVETYPE_FLYMISSILE && ent->movetype != MOVETYPE_FLYRICOCHET)//EALM?
 		SV_AddGravity (ent);
 
+	/*if (ent->movetype != MOVETYPE_FLYRICOCHET) {
+		ent->gravity = 0;
+		SV_AddGravity(ent);
+	}*/
 // move angles
 	VectorMA (ent->s.angles, FRAMETIME, ent->avelocity, ent->s.angles);
 

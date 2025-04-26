@@ -1,9 +1,24 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(520,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
   g_weapon.c
-C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(458,68): warning C4100: 'plane': unreferenced formal parameter
-C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(334,1): warning C4702: unreachable code
-C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(338,1): warning C4702: unreachable code
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(460,68): warning C4100: 'plane': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(802,77): warning C4100: 'kick': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(806,11): warning C4101: 'tr': unreferenced local variable
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(957,61): warning C4047: 'function': 'int' differs in levels of indirection from 'void *'
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(957,61): warning C4024: 'ThrowGib': different types for formal and actual parameter 4
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(955,78): warning C4100: 'surf': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(955,59): warning C4100: 'plane': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(955,42): warning C4100: 'other': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1297,2): warning C4013: 'ThrowNotGib' undefined; assuming extern returning int
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1283,9): warning C4101: 'dir': unreferenced local variable
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1285,9): warning C4101: 'end': unreferenced local variable
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1281,11): warning C4101: 'ignore': unreferenced local variable
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1282,9): warning C4101: 'point': unreferenced local variable
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1284,9): warning C4101: 'start': unreferenced local variable
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1287,10): warning C4101: 'tr': unreferenced local variable
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(1383,93): warning C4100: 'damage_radius': unreferenced formal parameter
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(336,1): warning C4702: unreachable code
 C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(340,1): warning C4702: unreachable code
-C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(341,1): warning C4702: unreachable code
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(342,1): warning C4702: unreachable code
+C:\Git\Quake 2\quake2-full-spring-2025\game\g_weapon.c(343,1): warning C4702: unreachable code
      Creating library .\..\release\gamex86.lib and object .\..\release\gamex86.exp
   game.vcxproj -> C:\Git\Quake 2\quake2-full-spring-2025\game\release\gamex86.dll

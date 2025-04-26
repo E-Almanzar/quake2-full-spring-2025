@@ -158,11 +158,11 @@ void Cmd_Give_f (edict_t *ent)
 	qboolean	give_all;
 	edict_t		*it_ent;
 
-	if (deathmatch->value && !sv_cheats->value)
+	/*if (deathmatch->value && !sv_cheats->value)
 	{
 		gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
 		return;
-	}
+	}*/
 
 	name = gi.args();
 
@@ -309,11 +309,11 @@ void Cmd_God_f (edict_t *ent)
 {
 	char	*msg;
 
-	if (deathmatch->value && !sv_cheats->value)
+	/*if (deathmatch->value && !sv_cheats->value)
 	{
 		gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
 		return;
-	}
+	}*/
 
 	ent->flags ^= FL_GODMODE;
 	if (!(ent->flags & FL_GODMODE) )
@@ -363,13 +363,13 @@ argv(0) noclip
 */
 void Cmd_Noclip_f (edict_t *ent)
 {
-	char	*msg;
+	char	*msg, *arg;
 
-	if (deathmatch->value && !sv_cheats->value)
+	/*if (deathmatch->value && !sv_cheats->value)
 	{
 		gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
 		return;
-	}
+	}*/
 
 	if (ent->movetype == MOVETYPE_NOCLIP)
 	{
@@ -382,6 +382,17 @@ void Cmd_Noclip_f (edict_t *ent)
 		msg = "noclip ON\n";
 	}
 
+	arg = gi.args();
+	if (Q_stricmp(arg, "bounce") == 0) {
+		if (ent->movetype != MOVETYPE_FLYRICOCHET) {
+			ent->movetype = MOVETYPE_FLYRICOCHET;
+			msg = "bounce on\n";
+		}
+		else {
+			ent->movetype = MOVETYPE_WALK;
+			msg = "bounce off\n";
+		}
+	}
 	gi.cprintf (ent, PRINT_HIGH, msg);
 }
 

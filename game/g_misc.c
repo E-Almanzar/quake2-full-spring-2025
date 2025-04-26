@@ -20,11 +20,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // g_misc.c
 
 #include "g_local.h"
-
+int originHelper = 0;
 //EALM? Do we need to declare?
 void func_explosive_explode(edict_t* self, edict_t* inflictor, edict_t* attacker, int damage, vec3_t point);
 void SP_misc_explobox(edict_t* self);
-
+void homing_think2(edict_t* ent);
 /*QUAKED func_group (0 0 0) ?
 Used to group brushes together just for editor convenience.
 */
@@ -145,27 +145,31 @@ void ThrowGib (edict_t *self, char *gibname, int damage, int type)
 
 	gib = G_Spawn();
 
-	VectorScale (self->size, 1, size);
+	//How far away they all go from one another
+	VectorScale (self->size, .5, size);
 	VectorAdd (self->absmin, size, origin);
 	gib->s.origin[0] = origin[0] + crandom() * size[0];
 	gib->s.origin[1] = origin[1] + crandom() * size[1];
 	gib->s.origin[2] = origin[2] + crandom() * size[2];
 
 	gi.setmodel (gib, gibname);
-	//gib->solid = SOLID_NOT;
-	gib->solid = SOLID_BBOX;
+	gib->solid = SOLID_NOT;
+	//gib->solid = SOLID_BBOX;
 	gib->s.effects |= EF_GIB;
-	//gib->flags |= FL_NO_KNOCKBACK;
-	//gib->team = team
+	gib->flags |= FL_NO_KNOCKBACK;
 	gib->takedamage = DAMAGE_YES;
 	gib->die = gib_die;
 	//T_RadiusDamage(self, self, 100, NULL, self->dmg + 40, MOD_BARREL);
 	if (type == GIB_ORGANIC)
 	{
-		//gib->movetype = MOVETYPE_TOSS;
-		gib->movetype = MOVETYPE_FLYRICOCHET;
+		gib->movetype = MOVETYPE_TOSS;
+		//gib->movetype = MOVETYPE_FLYRICOCHET;
+		//gib->movetype = MOVETYPE_PUSH;
 		gib->touch = gib_touch;
-		vscale = 5;
+
+		//Velocity
+		//vscale = 5;
+		vscale = 1.0;
 	}
 	else
 	{
@@ -181,6 +185,7 @@ void ThrowGib (edict_t *self, char *gibname, int damage, int type)
 	gib->avelocity[2] = random()*600;
 
 	gib->think = G_FreeEdict;
+	//gib->think = homing_think2;
 	gib->nextthink = level.time + 10 + random()*10;
 	//EALM?
 	
@@ -829,11 +834,11 @@ void func_explosive_spawn (edict_t *self, edict_t *other, edict_t *activator)
 
 void SP_func_explosive (edict_t *self)
 {
-	if (deathmatch->value)
+	/*if (deathmatch->value)
 	{	// auto-remove for deathmatch
 		G_FreeEdict (self);
 		return;
-	}
+	}*/
 
 	self->movetype = MOVETYPE_PUSH;
 
@@ -1880,4 +1885,268 @@ void SP_misc_teleporter_dest (edict_t *ent)
 	VectorSet (ent->maxs, 32, 32, -16);
 	gi.linkentity (ent);
 }
+void homing_think2(edict_t* ent)
+{
+	edict_t* target = NULL;
+	edict_t* blip = NULL;
+	vec3_t	targetdir, blipdir;
+	vec_t	speed;
+	
+	while ((blip = findradius(blip, ent->s.origin, 1000)) != NULL)
+	{
+		if (!(blip->svflags & SVF_MONSTER) && !blip->client)
+			continue;
+		if (blip == ent->owner)
+		     continue;
+		if (!blip->takedamage)
+			continue;
+		if (blip->health <= 0)
+			continue;
+		if (!visible(ent, blip))
+			continue;
+		if (!infront(ent, blip))
+			continue;
 
+		VectorSubtract(blip->s.origin, ent->s.origin, blipdir);
+		blipdir[2] += 16;
+		if ((target == NULL) || (VectorLength(blipdir) < VectorLength(targetdir)))
+		{
+			target = blip;
+			VectorCopy(blipdir, targetdir);
+		}
+	}
+	//edict_t* blip = NULL;
+
+	//ent->think = proxim_think;
+	while ((blip = findradius(blip, ent->s.origin, 15)) != NULL) {
+		if (!(blip->svflags & SVF_MONSTER) && !blip->client)
+			continue;
+		//if (blip == ent->owner)
+		   // continue;
+		if (!blip->takedamage)
+			continue;
+		if (blip->health <= 0)
+			continue;
+		if (!visible(ent, blip))
+			continue;
+		BecomeExplosion1(ent);
+		T_RadiusDamage(ent, ent, 100, NULL, 256, MOD_BARREL);
+		break;
+	}
+
+	if (target != NULL)
+	{
+		// target acquired, nudge our direction toward it
+		VectorNormalize(targetdir);
+		VectorScale(targetdir, 0.2, targetdir);
+		VectorAdd(targetdir, ent->movedir, targetdir);
+		VectorNormalize(targetdir);
+		VectorCopy(targetdir, ent->movedir);
+		vectoangles(targetdir, ent->s.angles);
+		speed = VectorLength(ent->velocity);
+		VectorScale(targetdir, speed, ent->velocity);
+	}
+
+
+	ent->nextthink = level.time + .1;
+}
+//Grenade explode
+static void Grenade_Explode(edict_t* ent)
+{
+	vec3_t		origin;
+	int			mod;
+
+	//
+
+
+	//T_RadiusDamage(ent, ent->owner, 100, NULL, 15, MOD_BARREL);
+
+	BecomeExplosion1(ent);
+	//T_RadiusDamage(ent, ent->owner, 10000, NULL, 2500, MOD_BARREL);
+	//weapon_grenade_fire(ent, false);
+	//G_FreeEdict(ent);
+	ent->think = G_FreeEdict;
+	ent->nextthink = level.time + 2;
+}
+
+//EALM
+void ThrowNotGib(edict_t* self, char* gibname, int damage, int type)
+{
+	edict_t* gib;
+	vec3_t	vd;
+	vec3_t	origin;
+	vec3_t	size;
+	float	vscale;
+
+	gib = G_Spawn();
+	VectorSet(self->mins, -16, -16, 0); //Bug where crashes when use too many
+	VectorSet(self->maxs, 16, 16, 16);
+	//How far away they all go from one another
+	VectorScale(self->size, .1, size);
+	VectorAdd(self->absmin, size, origin);
+	gib->s.origin[0] = origin[0] + crandom() * size[0];
+	gib->s.origin[1] = origin[1] + crandom() * size[1];
+	gib->s.origin[2] = origin[2] + crandom() * size[2];
+
+	gi.setmodel(gib, gibname);
+	//gib->solid = SOLID_NOT;
+	gib->solid = SOLID_BBOX;
+	gib->s.effects |= EF_GIB;
+	//gib->flags |= FL_NO_KNOCKBACK;
+	//gib->team = team
+	gib->takedamage = DAMAGE_YES;
+	gib->die = gib_die;
+	//T_RadiusDamage(self, self, 100, NULL, self->dmg + 40, MOD_BARREL);
+
+	gib->movetype = MOVETYPE_TOSS;
+	//gib->movetype = MOVETYPE_FLYRICOCHET;
+	//gib->movetype = MOVETYPE_PUSH;
+	gib->touch = gib_touch;
+
+	//Velocity
+	vscale = 1;
+
+	
+
+	VelocityForDamage(damage, vd);
+	VectorMA(self->velocity, vscale, vd, gib->velocity);
+	ClipGibVelocity(gib);
+	gib->avelocity[0] = random() * 600;
+	gib->avelocity[1] = random() * 600;
+	gib->avelocity[2] = random() * 600;
+
+	gib->think = Grenade_Explode;
+	//gib->think = homing_think2;s
+	gib->nextthink = level.time + 2;
+	//EALM?
+
+	gi.linkentity(gib);
+
+	//fire_grenade(gib, origin, gib->avelocity, 100, 100, level.time + 2, 100);
+
+}
+/*
+void fire_skull(edict_t* self) {
+	edict_t* grenade;
+	vec3_t	dir;
+	vec3_t	forward, right, up;
+	float timer = 2;
+	vectoangles(aimdir, dir);
+	AngleVectors(dir, forward, right, up);
+
+	grenade = G_Spawn();
+	VectorCopy(start, grenade->s.origin);
+	VectorScale(aimdir, 10, grenade->velocity);
+	VectorMA(grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
+	VectorMA(grenade->velocity, crandom() * 10.0, right, grenade->velocity);
+	VectorSet(grenade->avelocity, 300, 300, 300);
+	grenade->movetype = MOVETYPE_BOUNCE;
+	grenade->clipmask = MASK_SHOT;
+	grenade->solid = SOLID_BBOX;
+	grenade->s.effects |= EF_GRENADE;
+	VectorClear(grenade->mins);
+	VectorClear(grenade->maxs);
+	//grenade->s.modelindex = gi.modelindex("models/objects/grenade2/tris.md2");
+	grenade->s.modelindex = gi.modelindex("models/objects/gibs/skull/tris.md2");
+	grenade->owner = self;
+	grenade->touch = gib_touch;
+	grenade->nextthink = level.time + timer;
+	grenade->think = Grenade_Explode;
+	grenade->dmg = 10;
+	grenade->dmg_radius = 256;
+	grenade->classname = "hgrenade";
+	grenade->spawnflags = 1;
+	//grenade->s.sound = gi.soundindex("weapons/hgrenc1b.wav"); gi.soundindex ("misc/fhit3.wav")
+	grenade->s.sound = gi.soundindex("misc/fhit3.wav");
+
+	if (timer <= 0.0)
+		Grenade_Explode(grenade);
+	else
+	{
+		gi.sound(self, CHAN_WEAPON, gi.soundindex("misc/fhit3.wav"), 1, ATTN_NORM, 0);
+		gi.linkentity(grenade);
+	}
+}
+*/void make_explosive(edict_t* self);
+void bombstart(edict_t* self, char * gibname, int damage) {
+	edict_t* gib;
+	vec3_t	vd;
+	vec3_t	origin;
+	vec3_t	size;
+	float	vscale;
+
+	gib = G_Spawn();
+
+	//How far away they all go from one another
+	VectorScale(self->size, .5, size);
+	VectorAdd(self->absmin, size, origin);
+	gib->s.origin[0] = origin[0] + crandom() * size[0];
+	gib->s.origin[1] = origin[1] + crandom() * size[1];
+	gib->s.origin[2] = origin[2] + crandom() * size[2];
+
+	gi.setmodel(gib, gibname);
+	gib->solid = SOLID_NOT;
+	//gib->solid = SOLID_BBOX;
+	gib->s.effects |= EF_GIB;
+	gib->flags |= FL_NO_KNOCKBACK;
+	gib->takedamage = DAMAGE_YES;
+	gib->die = gib_die;
+
+	gib->movetype = MOVETYPE_TOSS;
+	//gib->movetype = MOVETYPE_FLYRICOCHET;
+	//gib->movetype = MOVETYPE_PUSH;
+	gib->touch = gib_touch;
+	vscale = 1.0;
+	
+
+	VelocityForDamage(damage, vd);
+	VectorMA(self->velocity, vscale, vd, gib->velocity);
+	ClipGibVelocity(gib);
+	gib->avelocity[0] = random() * 600;
+	gib->avelocity[1] = random() * 600;
+	gib->avelocity[2] = random() * 600;
+
+	gib->think = G_FreeEdict;
+	//gib->think = homing_think2;
+	gib->nextthink = level.time + 1 + random() * 10;
+	//EALM?
+	make_explosive(gib);
+	gi.linkentity(gib);
+	
+	//SP_func_explosive(gib);
+}
+
+void make_explosive(edict_t* self){
+
+
+	//self->movetype = MOVETYPE_PUSH;
+
+
+	if (self->spawnflags & 1)
+	{
+		self->svflags |= SVF_NOCLIENT;
+		self->solid = SOLID_NOT;
+		self->use = func_explosive_spawn;
+	}
+	else
+	{
+		//self->solid = SOLID_BSP;
+		if (self->targetname)
+			self->use = func_explosive_use;
+	}
+
+	if (self->spawnflags & 2)
+		self->s.effects |= EF_ANIM_ALL;
+	if (self->spawnflags & 4)
+		self->s.effects |= EF_ANIM_ALLFAST;
+
+	if (self->use != func_explosive_use)
+	{
+		if (!self->health)
+			self->health = 100;
+		self->die = func_explosive_explode;
+		self->takedamage = DAMAGE_YES;
+	}
+
+//	gi.linkentity(self);
+}
