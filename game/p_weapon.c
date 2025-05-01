@@ -517,8 +517,8 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		{
 			if (ent->client->ps.gunframe == fire_frames[n])
 			{
-				if (ent->client->quad_framenum > level.framenum)
-					gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
+				//if (ent->client->quad_framenum > level.framenum)
+					//gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
 
 				fire (ent);
 				break;
@@ -1024,7 +1024,7 @@ void Machinegun_Fire (edict_t *ent)
 		ent->client->ps.gunframe = 6;
 		if (level.time >= ent->pain_debounce_time)
 		{
-			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			//gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
 			ent->pain_debounce_time = level.time + 1;
 		}
 		NoAmmoWeaponChange (ent);
@@ -1058,7 +1058,8 @@ void Machinegun_Fire (edict_t *ent)
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	//EALM machinegun into fire lead with huge knockback
+	fire_bullet (ent, start, forward, 1, 0, 0, 0, MOD_MACHINEGUN);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1066,6 +1067,7 @@ void Machinegun_Fire (edict_t *ent)
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+	//gi.sound(ent, CHAN_AUTO, gi.soundindex("world/airhiss.wav"), 1, ATTN_IDLE, 0);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;

@@ -791,11 +791,6 @@ void tank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 */
 void SP_monster_tank (edict_t *self)
 {
-	if (deathmatch->value)
-	{
-		G_FreeEdict (self);
-		return;
-	}
 
 	self->s.modelindex = gi.modelindex ("models/monsters/tank/tris.md2");
 	VectorSet (self->mins, -32, -32, -16);
@@ -853,4 +848,13 @@ void SP_monster_tank (edict_t *self)
 
 	if (strcmp(self->classname, "monster_tank_commander") == 0)
 		self->s.skinnum = 2;
+
+	//EALM in the spawn
+
+	int i = didawizardspawnme(0, 1);
+	if (i) {
+		//ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, GIB_ORGANIC);
+	}
+	self->monsterinfo.aiflags;
+	gi.dprintf("team? %s i? %i", self->team, i);
 }

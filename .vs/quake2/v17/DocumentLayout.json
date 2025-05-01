@@ -3,32 +3,36 @@
   "WorkspaceRootPath": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_ai.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_ai.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\m_tank.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\m_tank.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_weapon.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_weapon.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\p_weapon.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\p_weapon.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_spawn.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_spawn.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_phys.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_phys.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{C50658D3-5399-49E0-B84E-296D8E01854F}|ctf\\ctf.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_misc.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{C50658D3-5399-49E0-B84E-296D8E01854F}|ctf\\ctf.vcxproj|solutionrelative:ctf\\g_misc.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_misc.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_misc.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_local.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_local.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C50658D3-5399-49E0-B84E-296D8E01854F}|ctf\\ctf.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_utils.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{C50658D3-5399-49E0-B84E-296D8E01854F}|ctf\\ctf.vcxproj|solutionrelative:ctf\\g_utils.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{C50658D3-5399-49E0-B84E-296D8E01854F}|ctf\\ctf.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_spawn.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{C50658D3-5399-49E0-B84E-296D8E01854F}|ctf\\ctf.vcxproj|solutionrelative:ctf\\g_spawn.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_cmds.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_cmds.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_combat.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{99BC3F01-A7EE-4881-939F-8A5EB75E1973}|game\\game.vcxproj|solutionrelative:game\\g_combat.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,47 +42,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "g_weapon.c",
               "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_weapon.c",
               "RelativeDocumentMoniker": "game\\g_weapon.c",
               "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_weapon.c",
               "RelativeToolTip": "game\\g_weapon.c",
-              "ViewState": "AgIAAPgBAAAAAAAAAAAAwAwCAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAACgDAAAAAAAAAAAAwDIDAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2025-04-24T15:38:22.535Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "p_weapon.c",
-              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\p_weapon.c",
-              "RelativeDocumentMoniker": "game\\p_weapon.c",
-              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\p_weapon.c",
-              "RelativeToolTip": "game\\p_weapon.c",
-              "ViewState": "AgIAABIFAAAAAAAAAAAAwCUFAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-03-27T20:42:29.312Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "g_cmds.c",
-              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_cmds.c",
-              "RelativeDocumentMoniker": "game\\g_cmds.c",
-              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_cmds.c",
-              "RelativeToolTip": "game\\g_cmds.c",
-              "ViewState": "AgIAACYBAAAAAAAAAAAYwCABAAALAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-04-26T15:56:57.951Z",
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -86,55 +63,88 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "g_utils.c",
-              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_utils.c",
-              "RelativeDocumentMoniker": "ctf\\g_utils.c",
-              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_utils.c",
-              "RelativeToolTip": "ctf\\g_utils.c",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "g_ai.c",
+              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_ai.c",
+              "RelativeDocumentMoniker": "game\\g_ai.c",
+              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_ai.c",
+              "RelativeToolTip": "game\\g_ai.c",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-04-25T22:52:49.406Z",
+              "WhenOpened": "2025-04-28T21:45:41.259Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "m_tank.c",
+              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\m_tank.c",
+              "RelativeDocumentMoniker": "game\\m_tank.c",
+              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\m_tank.c",
+              "RelativeToolTip": "game\\m_tank.c",
+              "ViewState": "AgIAAEwDAAAAAAAAAAAAAFcDAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-28T20:58:55.406Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "g_misc.c",
-              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_misc.c",
-              "RelativeDocumentMoniker": "game\\g_misc.c",
-              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_misc.c",
-              "RelativeToolTip": "game\\g_misc.c",
-              "ViewState": "AgIAAIUDAAAAAAAAAAAAwJIDAAAwAAAAAAAAAA==",
+              "Title": "g_spawn.c",
+              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_spawn.c",
+              "RelativeDocumentMoniker": "game\\g_spawn.c",
+              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_spawn.c",
+              "RelativeToolTip": "game\\g_spawn.c",
+              "ViewState": "AgIAAMgBAAAAAAAAAAAAANUBAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-04-23T21:27:09.841Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-28T21:09:27.301Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "g_phys.c",
-              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_phys.c",
-              "RelativeDocumentMoniker": "game\\g_phys.c",
-              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_phys.c",
-              "RelativeToolTip": "game\\g_phys.c",
-              "ViewState": "AgIAAKkCAAAAAAAAAAAAwMECAAAVAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "g_misc.c",
+              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_misc.c",
+              "RelativeDocumentMoniker": "ctf\\g_misc.c",
+              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_misc.c",
+              "RelativeToolTip": "ctf\\g_misc.c",
+              "ViewState": "AgIAANgEAAAAAAAAAAAlwOYEAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-04-24T18:28:36.629Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-28T21:05:27.782Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "g_local.h",
+              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_local.h",
+              "RelativeDocumentMoniker": "game\\g_local.h",
+              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_local.h",
+              "RelativeToolTip": "game\\g_local.h",
+              "ViewState": "AgIAAPwDAAAAAAAAAAAAwAkEAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-04-28T20:27:05.297Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "g_combat.c",
-              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_combat.c",
-              "RelativeDocumentMoniker": "game\\g_combat.c",
-              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_combat.c",
-              "RelativeToolTip": "game\\g_combat.c",
-              "ViewState": "AgIAAB4CAAAAAAAAAAAtwCcCAAAJAAAAAAAAAA==",
+              "Title": "g_spawn.c",
+              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_spawn.c",
+              "RelativeDocumentMoniker": "ctf\\g_spawn.c",
+              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\ctf\\g_spawn.c",
+              "RelativeToolTip": "ctf\\g_spawn.c",
+              "ViewState": "AgIAAAUCAAAAAAAAAAAlwAECAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-04-26T15:02:18.836Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-27T20:26:45.084Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "g_cmds.c",
+              "DocumentMoniker": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_cmds.c",
+              "RelativeDocumentMoniker": "game\\g_cmds.c",
+              "ToolTip": "C:\\Git\\Quake 2\\quake2-full-spring-2025\\game\\g_cmds.c",
+              "RelativeToolTip": "game\\g_cmds.c",
+              "ViewState": "AgIAALMDAAAAAAAAAAAQwMMDAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-04-26T15:56:57.951Z"
             }
           ]
         }

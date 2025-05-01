@@ -593,7 +593,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		// remove things (except the world) from different skill levels or deathmatch
 		if (ent != g_edicts)
 		{
-			if (deathmatch->value)
+			/*if (deathmatch->value)
 			{
 				if ( ent->spawnflags & SPAWNFLAG_NOT_DEATHMATCH )
 				{
@@ -603,7 +603,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 				}
 			}
 			else
-			{
+			{*/
 				if ( /* ((coop->value) && (ent->spawnflags & SPAWNFLAG_NOT_COOP)) || */
 					((skill->value == 0) && (ent->spawnflags & SPAWNFLAG_NOT_EASY)) ||
 					((skill->value == 1) && (ent->spawnflags & SPAWNFLAG_NOT_MEDIUM)) ||
@@ -614,7 +614,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 						inhibit++;
 						continue;
 					}
-			}
+			//}
 
 			ent->spawnflags &= ~(SPAWNFLAG_NOT_EASY|SPAWNFLAG_NOT_MEDIUM|SPAWNFLAG_NOT_HARD|SPAWNFLAG_NOT_COOP|SPAWNFLAG_NOT_DEATHMATCH);
 		}

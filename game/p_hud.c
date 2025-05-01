@@ -366,6 +366,53 @@ void Cmd_Help_f (edict_t *ent)
 	HelpComputer (ent);
 }
 
+void Cmd_whelp_f(edict_t* ent) //EALM
+{
+
+	ent->client->showinventory = false;
+	ent->client->showscores = false;
+
+	if (ent->client->showhelp && (ent->client->pers.game_helpchanged == game.helpchanged))
+	{
+		ent->client->showhelp = false;
+		return;
+	}
+
+	ent->client->showhelp = true;
+	ent->client->pers.helpchanged = 0;
+
+	if (!ent || !ent->client) return;
+	//char* arg;
+	//arg = gi.args();
+	char	string[1024];
+	char* sk = "MEGISTUS";
+	char * message1 = "BEHOLD! THE WIZARD ARRIVES", * message2 = "USE YOUR RESOURCES WISELY.\n YOU HAVE SPELLS LEVELS 1-5";
+	char * message3 = "1-9 FOR COMBAT, KEYSTROKES t-o\nFOR UTILITY & g-l FOR SUMMONS";
+													
+	//gi.cprintf(ent, PRINT_HIGH, "cprintf%s\n");
+
+	Com_sprintf(string, sizeof(string),
+		"xv 32 yv 8 picn help "			// background
+		"xv 202 yv 12 string2 \"%s\" "		// skill
+		"xv 0 yv 24 cstring2 \"%s\" "		// level name
+		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
+		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
+		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
+		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ",
+		sk,
+		message1,
+		message2,
+		message3,
+		"", "",
+		"", "",
+		"", "");
+
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+	gi.unicast(ent, true);
+	
+}
+
 
 //=======================================================================
 

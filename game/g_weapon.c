@@ -224,7 +224,13 @@ static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 		{
 			if (tr.ent->takedamage)
 			{
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
+				//EALM Machinegun
+				if (mod == MOD_MACHINEGUN) {
+					float newKnockback = pow(-1, (int)crandom())*200 + crandom()* crandom() / crandom();
+					T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, newKnockback, DAMAGE_BULLET, mod);
+				}
+				else
+					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
 			}
 			else
 			{
@@ -523,8 +529,8 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 		grenade->s.effects |= EF_GRENADE;
 	}
 	grenade->owner = self;
-	//grenade->touch = Grenade_Touch;
-	grenade->touch = rocket_touch;
+	grenade->touch = Grenade_Touch;
+	//grenade->touch = rocket_touch;
 	grenade->nextthink = level.time + timer;
 	grenade->think = Grenade_Explode;
 	grenade->dmg = damage;
