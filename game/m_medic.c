@@ -764,6 +764,5 @@ void SP_monster_medic (edict_t *self)
 
 	self->monsterinfo.currentmove = &medic_move_stand;
 	self->monsterinfo.scale = MODEL_SCALE;
-
 	walkmonster_start (self);
 }

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m_player.h"
 
 int wizardspawning;
+int returnbool = 0;
+vec3_t returncoords;
 
 
 char *ClientTeam (edict_t *ent)
@@ -960,8 +962,188 @@ void Cmd_Spawn_f(edict_t* ent) //EALM
 	char* arg;
 	arg = gi.args();
 	spawnmonster(ent, arg);
+	//We want to have individual helper functions to call the spawn of each guy
+	// Tank brain mutant parasite and medic
+	//gi.cprintf(ent, PRINT_HIGH, "your team is %s\n", ent->team);
 
-	gi.cprintf(ent, PRINT_HIGH, "your team is %s\n", ent->team);
+}
+
+void Cmd_Heal_f(edict_t* ent){ //EALM
+	//Be sure to take away a spell slot
+	if(ent->health +25 > 200){
+		gi.cprintf(ent, PRINT_HIGH, "Too much health!!");
+		//we could kill them, id be kinda funny, or do like 100 damage
+		return;
+	}
+	ent->health = ent->health + 25;
+	
+}
+
+void Cmd_Return_f(edict_t* ent) { //EALM
+	//Be sure to take away a spell slot
+	
+	if (returnbool) {
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_EXPLOSION2);
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(ent->s.origin, MULTICAST_PVS);
+		
+		ent->s.origin[0] = returncoords[0];
+		ent->s.origin[1] = returncoords[1];
+		ent->s.origin[2] = returncoords[2];
+		returnbool = 0;
+
+
+	}
+	else {
+		returncoords[0] = ent->s.origin[0];
+		returncoords[1] = ent->s.origin[1];
+		returncoords[2] = ent->s.origin[2];
+		returnbool = 1;
+
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_EXPLOSION2);
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	}
+	//Ooh a swap spell would be sick
+	//but then you'd have to hit stuff :(
+}
+void freeze_think(edict_t* self)
+{
+
+	self->s.frame++;
+	self->nextthink = level.time + FRAMETIME + 10;
+	
+}
+
+void Cmd_Freeze_f(edict_t* ent) {
+
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage;
+	int			kick;
+
+	damage = 150;
+	kick = 250;
+
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+	VectorScale(forward, -3, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -3;
+
+	VectorSet(offset, 0, 7, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	//fire_rail(ent, start, forward, damage, kick);
+
+	vec3_t		from;
+	vec3_t		end, aimdir;
+	trace_t		tr;
+	edict_t* ignore, *self;
+	int			mask;
+	qboolean	water;
+	self = ent; 
+	VectorCopy(forward, aimdir);
+	
+	
+	VectorMA(start, 8192, aimdir, end);
+	VectorCopy(start, from);
+	ignore = self;
+	water = false;
+	mask = MASK_SHOT | CONTENTS_SLIME | CONTENTS_LAVA;
+	while (ignore)
+	{
+		tr = gi.trace(from, NULL, NULL, end, ignore, mask);
+
+		if (tr.contents & (CONTENTS_SLIME | CONTENTS_LAVA))
+		{
+			mask &= ~(CONTENTS_SLIME | CONTENTS_LAVA);
+			water = true;
+		}
+		else
+		{
+			if ((tr.ent->svflags & SVF_MONSTER) || (tr.ent->client))
+				ignore = tr.ent;
+			else
+				ignore = NULL;
+
+			if ((tr.ent != self) && (tr.ent->takedamage)){
+				//T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+				tr.ent->think = freeze_think;
+			}
+		}
+
+		VectorCopy(tr.endpos, from);
+	}
+
+	// send gun puff / flash TS is cool
+	/*gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_RAILTRAIL);
+	gi.WritePosition(start);
+	gi.WritePosition(tr.endpos);
+	gi.multicast(self->s.origin, MULTICAST_PHS);*/
+	//	gi.multicast (start, MULTICAST_PHS);
+	
+
+	/*if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+	*/
+}
+
+//Useless
+void Cmd_HealTarget_f(edict_t* ent) {
+	if (!ent)
+		return;
+
+	int	i;
+	vec3_t		start;
+	vec3_t		forward, right, dir, end;
+	vec3_t		angles;
+	int			damage = -50;
+	int			kick = 2;
+	vec3_t		offset;
+	trace_t	tr;
+
+
+	AngleVectors(angles, forward, right, NULL);
+	gi.cprintf(ent, PRINT_HIGH, "%i %i %i origin.\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+	VectorSet(offset, 0, 8, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	//fire_bullet(ent, start, forward, 1, 0, 0, 0, MOD_MACHINEGUN);
+	//fire_bullet(ent, start, forward, damage, 0, 0, 0, 0);
+	
+
+	tr = gi.trace(ent->s.origin, NULL, NULL, start, ent, MASK_SHOT);
+	
+	if (!(tr.fraction < 1.0))
+	{
+		AngleVectors(angles, forward, right, NULL);
+		//gi.cprintf(ent, PRINT_HIGH, "%i %i %i origin.\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+		VectorSet(offset, 0, 8, ent->viewheight - 8);
+		P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+		//vectoangles(forward, dir);
+		//AngleVectors(dir, forward, right, NULL);
+
+		
+		//VectorMA(start, 8192, forward, end);
+		
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+		if ((tr.fraction < 1.0)){
+			gi.cprintf(ent, PRINT_HIGH, "<1.\n");
+			//if (tr.ent->takedamage) {
+			if (tr.ent->takedamage) {
+				gi.cprintf(ent, PRINT_HIGH, "Exists.\n");
+				tr.ent->health + 100000;
+				//gi.cprintf(ent, PRINT_HIGH, "Can take damage.\n");
+				//T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, newKnockback, DAMAGE_BULLET, mod);
+			}
+		}
+	}
+	//else
+	//	gi.cprintf(ent, PRINT_HIGH, "Fuck off.\n");
+	//gi.dprintf("%s at %s, combattarget %s not found\n", self->classname, vtos(self->s.origin), self->combattarget);
 
 }
 /*
@@ -1055,6 +1237,14 @@ void ClientCommand (edict_t *ent)
 		Cmd_Spawn_f(ent);
 	else if (Q_stricmp(cmd, "whelp") == 0)
 		Cmd_whelp_f(ent);
+	else if (Q_stricmp(cmd, "heal") == 0)
+		Cmd_Heal_f(ent);
+	else if (Q_stricmp(cmd, "healtarget") == 0)
+		Cmd_HealTarget_f(ent);
+	else if (Q_stricmp(cmd, "return") == 0)
+		Cmd_Return_f(ent);
+	else if (Q_stricmp(cmd, "freeze") == 0)
+		Cmd_Freeze_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

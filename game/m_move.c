@@ -522,7 +522,7 @@ void M_MoveToGoal (edict_t *ent, float dist)
 		return;
 
 // if the next step hits the enemy, return immediately
-	if (ent->enemy &&  SV_CloseEnough (ent, ent->enemy, dist) )
+	if (ent->enemy &&  SV_CloseEnough (ent, ent->enemy, dist/10) )
 		return;
 
 // bump around...

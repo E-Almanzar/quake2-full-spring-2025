@@ -579,6 +579,39 @@ qboolean monster_start (edict_t *self)
 
 	return true;
 }
+//EALM 
+void summon_think(edict_t* self)
+{
+	M_MoveFrame(self);
+	if (self->linkcount != self->monsterinfo.linkcount)
+	{
+		self->monsterinfo.linkcount = self->linkcount;
+		M_CheckGround(self);
+	}
+	M_CatagorizePosition(self);
+	M_WorldEffects(self);
+	M_SetEffects(self);
+
+	
+	edict_t* ent = NULL;
+	int ownercount = 0;
+	while ((ent = findradius(ent, self->s.origin, 528)) != NULL) {
+		if (ent == self)
+			continue;
+		if (!ent->takedamage)
+			continue;
+		if (strcmp(ent->classname, "misc_explobox") != 0)
+			continue;
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+			continue;
+		if (ent == self->owner) 
+				continue;
+
+		self->enemy = ent;
+
+		
+	}
+}
 
 void monster_start_go (edict_t *self)
 {
@@ -597,6 +630,7 @@ void monster_start_go (edict_t *self)
 		target = NULL;
 		notcombat = false;
 		fixup = false;
+		//EALM we have to make it so that if a wizard spawned uswe
 		while ((target = G_Find (target, FOFS(targetname), self->target)) != NULL)
 		{
 			if (strcmp(target->classname, "point_combat") == 0)
@@ -663,7 +697,11 @@ void monster_start_go (edict_t *self)
 		self->monsterinfo.stand (self);
 	}
 
-	self->think = monster_think;
+	if (self->monsterinfo.aiflags & AI_SUMMONED) {
+		self->think = summon_think;
+	}
+	else
+		self->think = monster_think;
 	self->nextthink = level.time + FRAMETIME;
 }
 

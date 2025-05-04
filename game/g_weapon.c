@@ -806,19 +806,20 @@ fire_rail
 =================
 */
 void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick)
-{
+{//EALM Swap gun?
 	vec3_t		from;
-	vec3_t		end;
+	vec3_t		end, temp;
 	trace_t		tr;
 	edict_t		*ignore;
 	int			mask;
 	qboolean	water;
+	damage = 50;
 	
 	VectorMA (start, 8192, aimdir, end);
 	VectorCopy (start, from);
 	ignore = self;
 	water = false;
-	mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;/*
+	mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;
 	while (ignore)
 	{
 		tr = gi.trace (from, NULL, NULL, end, ignore, mask);
@@ -835,8 +836,21 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 			else
 				ignore = NULL;
 
-			if ((tr.ent != self) && (tr.ent->takedamage))
+			if ((tr.ent != self) && (tr.ent->takedamage)){
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+				temp[0] = self->s.origin[0];
+				temp[1] = self->s.origin[1];
+				temp[2] = self->s.origin[2];
+				
+				self->s.origin[0] = tr.ent->s.origin[0];
+				self->s.origin[1] = tr.ent->s.origin[1];
+				self->s.origin[2] = tr.ent->s.origin[2];
+
+				tr.ent->s.origin[0] = temp[0];
+				tr.ent->s.origin[1] = temp[1];
+				tr.ent->s.origin[2] = temp[2];
+			
+			}
 		}
 
 		VectorCopy (tr.endpos, from);
@@ -859,9 +873,9 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	}
 
 	if (self->client)
-		PlayerNoise(self, tr.endpos, PNOISE_IMPACT);*/
+		PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
 	//EALM
-	edict_t * bfg;
+	/*edict_t* bfg;
 
 	bfg = G_Spawn();
 	VectorCopy(start, bfg->s.origin);
@@ -892,7 +906,7 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	if (self->client)
 		check_dodge(self, bfg->s.origin, aimdir, 50);
 
-	gi.linkentity(bfg);
+	gi.linkentity(bfg);*/
 }//EALM rail to bfg? //set cheats 1
 
 void mybfg_think(edict_t* self)

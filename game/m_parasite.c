@@ -547,6 +547,12 @@ void SP_monster_parasite (edict_t *self)
 
 	self->monsterinfo.currentmove = &parasite_move_stand;	
 	self->monsterinfo.scale = MODEL_SCALE;
-
+	
+	//EALM did a wizard spawn me
+	//Sets the flag for being summoned, which changes the g_monster think and g_ai find
+	if (didawizardspawnme(0, 1)) {
+		//ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, GIB_ORGANIC);
+		self->monsterinfo.aiflags |= AI_SUMMONED;
+	}
 	walkmonster_start (self);
 }

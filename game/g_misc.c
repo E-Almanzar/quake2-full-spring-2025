@@ -159,6 +159,7 @@ void ThrowGib (edict_t *self, char *gibname, int damage, int type)
 	gib->flags |= FL_NO_KNOCKBACK;
 	gib->takedamage = DAMAGE_YES;
 	gib->die = gib_die;
+	gib->classname = "gib";
 	//T_RadiusDamage(self, self, 100, NULL, self->dmg + 40, MOD_BARREL);
 	if (type == GIB_ORGANIC)
 	{
@@ -2025,6 +2026,61 @@ void ThrowNotGib(edict_t* self, char* gibname, int damage, int type)
 	//fire_grenade(gib, origin, gib->avelocity, 100, 100, level.time + 2, 100);
 
 }
+
+void ThrowNotGib2(edict_t* self, char* gibname, int damage, int type)
+{
+	edict_t* gib;
+	vec3_t	vd;
+	vec3_t	origin;
+	vec3_t	size;
+	float	vscale;
+
+	gib = G_Spawn();
+	VectorSet(self->mins, -16, -16, 0); //Bug where crashes when use too many
+	VectorSet(self->maxs, 16, 16, 16);
+	//How far away they all go from one another
+	VectorScale(self->size, .1, size);
+	VectorAdd(self->absmin, size, origin);
+	gib->s.origin[0] = origin[0] + crandom() * size[0];
+	gib->s.origin[1] = origin[1] + crandom() * size[1];
+	gib->s.origin[2] = origin[2] + crandom() * size[2];
+
+	gi.setmodel(gib, gibname);
+	gib->solid = SOLID_NOT;
+	//gib->solid = SOLID_BBOX;
+	gib->s.effects |= EF_PLASMA;
+	//gib->flags |= FL_NO_KNOCKBACK;
+	//gib->team = team
+	gib->takedamage = DAMAGE_NO;
+	gib->die = gib_die;
+
+	gib->movetype = MOVETYPE_TOSS;
+	//gib->movetype = MOVETYPE_FLYRICOCHET;
+	//gib->movetype = MOVETYPE_PUSH;
+	gib->touch = gib_touch;
+
+	//Velocity
+	vscale = 0;
+
+
+
+	VelocityForDamage(damage, vd);
+	VectorMA(self->velocity, vscale, vd, gib->velocity);
+	ClipGibVelocity(gib);
+	gib->avelocity[0] = random() * 600;
+	gib->avelocity[1] = random() * 600;
+	gib->avelocity[2] = random() * 600;
+
+	gib->think = G_FreeEdict;
+	//gib->think = homing_think2;s
+	gib->nextthink = level.time + 1 + random() *2;
+	//EALM?
+
+	gi.linkentity(gib);
+
+	//fire_grenade(gib, origin, gib->avelocity, 100, 100, level.time + 2, 100);
+
+}
 /*
 void fire_skull(edict_t* self) {
 	edict_t* grenade;
@@ -2110,7 +2166,7 @@ void bombstart(edict_t* self, char * gibname, int damage) {
 	//gib->think = homing_think2;
 	gib->nextthink = level.time + 1 + random() * 10;
 	//EALM?
-	make_explosive(gib);
+	//make_explosive(gib);
 	gi.linkentity(gib);
 	
 	//SP_func_explosive(gib);

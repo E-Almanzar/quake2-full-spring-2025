@@ -571,6 +571,36 @@ qboolean FindTarget (edict_t *self)
 		self->enemy = client;
 	}
 
+	//EALM
+	if (self->monsterinfo.aiflags & AI_SUMMONED) {
+		if (client->classname = "player") {
+			//ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, GIB_ORGANIC);
+			//ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, GIB_ORGANIC);
+			//ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, GIB_ORGANIC);
+			
+			self->owner = client;
+			trace_t	tr;
+			edict_t* ent = NULL;
+			while ((ent = findradius(ent, self->s.origin, 256)) != NULL){
+				if (ent == self)
+					continue;
+				if (ent == self->owner)
+					continue;
+				if (!ent->takedamage)
+					continue;
+
+				if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+					continue;
+				if(ent )
+				self->enemy = ent;
+			}
+		}
+		if (!self->enemy) {
+			return;
+		}
+	}
+
+
 //
 // got one
 //
@@ -832,8 +862,29 @@ qboolean ai_checkattack (edict_t *self, float dist)
 
 	if (hesDeadJim)
 	{
+		
+		
+		//EALM i have no clue
+		if (self->monsterinfo.aiflags & AI_SUMMONED && self->enemy != NULL) {
+			for(int i = 0; i < 10; i++){
+				ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 5, GIB_ORGANIC);
+			}
+			//So it works? hes not shiggy but he does just walk in place
+			// Maybe he needs his state changed?
+			//IG look for another one?
+			//Maybe we just kill ourselves?
+			gi.WriteByte(svc_temp_entity);
+			gi.WriteByte(TE_EXPLOSION2);
+			gi.WritePosition(self->s.origin);
+			gi.multicast(self->s.origin, MULTICAST_PVS);
+			G_FreeEdict(self);
+
+			return true;
+		}
 		self->enemy = NULL;
-	// FIXME: look all around for other targets
+		// FIXME: look all around for other targets
+		//EALM maybe here idk why they hit the jiggy, also fix the tank's projectiles
+		//tank projectiles are like an easter egg
 		if (self->oldenemy && self->oldenemy->health > 0)
 		{
 			self->enemy = self->oldenemy;
@@ -858,6 +909,7 @@ qboolean ai_checkattack (edict_t *self, float dist)
 			}
 			return true;
 		}
+		
 	}
 
 	self->show_hostile = level.time + 1;		// wake up other monsters

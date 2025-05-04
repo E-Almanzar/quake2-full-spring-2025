@@ -1042,16 +1042,17 @@ void Machinegun_Fire (edict_t *ent)
 		ent->client->kick_origin[i] = crandom() * 0.35;
 		ent->client->kick_angles[i] = crandom() * 0.7;
 	}
-	ent->client->kick_origin[0] = crandom() * 0.35;
-	ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
-
+	//ent->client->kick_origin[0] = crandom() * 0.35;
+	//ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
+	ent->client->kick_origin[0] = 0;
+	ent->client->kick_angles[0] = 0;
 	// raise the gun as it is firing
-	if (!deathmatch->value)
+	/*if (!deathmatch->value)
 	{
 		ent->client->machinegun_shots++;
 		if (ent->client->machinegun_shots > 9)
 			ent->client->machinegun_shots = 9;
-	}
+	}*/
 
 	// get start / end positions
 	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);

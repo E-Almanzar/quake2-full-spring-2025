@@ -849,12 +849,12 @@ void SP_monster_tank (edict_t *self)
 	if (strcmp(self->classname, "monster_tank_commander") == 0)
 		self->s.skinnum = 2;
 
-	//EALM in the spawn
-
-	int i = didawizardspawnme(0, 1);
-	if (i) {
+	//EALM did a wizard spawn me
+	//Sets the flag for being summoned, which changes the g_monster think and g_ai find
+	if (didawizardspawnme(0, 1)) {
 		//ThrowGib(self, "models/objects/gibs/sm_meat/tris.md2", 50, GIB_ORGANIC);
+		self->monsterinfo.aiflags |= AI_SUMMONED;
 	}
-	self->monsterinfo.aiflags;
-	gi.dprintf("team? %s i? %i", self->team, i);
+	//self->monsterinfo.aiflags;
+	//gi.dprintf("team? %s i? %i", self->team, i);
 }

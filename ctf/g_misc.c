@@ -198,7 +198,8 @@ void ThrowHead (edict_t *self, char *gibname, int damage, int type)
 	self->s.sound = 0;
 	self->flags |= FL_NO_KNOCKBACK;
 	self->svflags &= ~SVF_MONSTER;
-	self->takedamage = DAMAGE_YES;
+	//self->takedamage = DAMAGE_YES;
+	self->takedamage = DAMAGE_NO;
 	self->die = gib_die;
 
 	if (type == GIB_ORGANIC)
@@ -1265,7 +1266,8 @@ void SP_misc_deadsoldier (edict_t *ent)
 	}
 
 	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_BBOX;
+	//ent->solid = SOLID_BBOX;
+	ent->solid = SOLID_NOT;
 	ent->s.modelindex=gi.modelindex ("models/deadbods/dude/tris.md2");
 
 	// Defaults to frame 0
