@@ -22,7 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 int wizardspawning;
 int returnbool = 0;
-vec3_t returncoords;
+int externgivall = 0;
+vec3_t returncoords, returnviewangles;
 
 
 char *ClientTeam (edict_t *ent)
@@ -174,7 +175,10 @@ void Cmd_Give_f (edict_t *ent)
 		give_all = true;
 	else
 		give_all = false;
-
+	
+	if (externgivall) {
+		give_all = true;
+	}
 	if (give_all || Q_stricmp(gi.argv(1), "health") == 0)
 	{
 		if (gi.argc() == 3)
@@ -680,6 +684,8 @@ void Cmd_PutAway_f (edict_t *ent)
 	ent->client->showscores = false;
 	ent->client->showhelp = false;
 	ent->client->showinventory = false;
+	ent->client->showCustomUI = false;
+
 }
 
 
@@ -938,7 +944,12 @@ void spawnmonster(edict_t* ent, char* name) {
 	//VectorCopy(start, ent->s.origin); WAIT CAN WE USE VECTOR COPY ON THIS TO TELEPORT???
 	//AngleVectors(ent->client->v_angle, dir, NULL, NULL);
 	//Basically getting it to the right spot?
-	VectorSet(offset, 128, 0, ent->viewheight - 8);
+	if ((Q_stricmp(name, "monster_supertank") == 0)) {
+		VectorSet(offset, 250, 0, ent->viewheight - 8);
+
+	}
+	else
+		VectorSet(offset, 100, 0, ent->viewheight - 8);
 	AngleVectors(ent->client->v_angle, forward, right, NULL);
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
 	start[2] = ent->s.origin[2];
@@ -947,9 +958,9 @@ void spawnmonster(edict_t* ent, char* name) {
 	entspawn = G_Spawn();
 	entspawn->classname = name;
 
-	VectorSet(dir, 0, 0, 0);
+	//VectorSet(dir, 0, 0, 0);
 	VectorCopy(start, entspawn->s.origin);
-	VectorCopy(dir, entspawn->s.angles);
+	VectorCopy(ent->s.angles, entspawn->s.angles);
 
 	//Yes a wizard did spawn you 
 	didawizardspawnme(1, 0);
@@ -967,21 +978,46 @@ void Cmd_Spawn_f(edict_t* ent) //EALM
 	//gi.cprintf(ent, PRINT_HIGH, "your team is %s\n", ent->team);
 
 }
+void Cmd_Spawn_Soldier_f(edict_t* ent) { if (!ent || !ent->client) return; 
+if (ent->plevel < 1) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 1 to summon the Soldier\n"); return; }
+spawnmonster(ent, "monster_soldier"); }
+void Cmd_Spawn_Tank_f(edict_t* ent) { if (!ent || !ent->client) return; 
+if (ent->plevel < 4) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 4 to summon the Tank\n"); return; }
+spawnmonster(ent, "monster_tank"); }
+void Cmd_Spawn_Parasite_f(edict_t* ent) { if (!ent || !ent->client) return; 
+if (ent->plevel < 2) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 2 to summon the Parasite\n"); return; }
+spawnmonster(ent, "monster_parasite"); }
+void Cmd_Spawn_Brain_f(edict_t* ent) { if (!ent || !ent->client) return; 
+if (ent->plevel < 3) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 3 to summon the Brain\n"); return; }
+spawnmonster(ent, "monster_brain"); }
+void Cmd_Spawn_Supertank_f(edict_t* ent) { if (!ent || !ent->client) return; 
+if (ent->plevel < 5) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 5 to summon the Supertank\n"); return; }
+spawnmonster(ent, "monster_supertank"); }
 
 void Cmd_Heal_f(edict_t* ent){ //EALM
 	//Be sure to take away a spell slot
+	
+	if (ent->plevel < 1) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 1 to cast Heal\n"); return; }
+	else { gi.cprintf(ent, PRINT_HIGH, "Casted Heal\n"); }
 	if(ent->health +25 > 200){
-		gi.cprintf(ent, PRINT_HIGH, "Too much health!!");
+		gi.cprintf(ent, PRINT_HIGH, "Too much health!!\n");
 		//we could kill them, id be kinda funny, or do like 100 damage
+		ent->health = ent->health - 25;
 		return;
 	}
 	ent->health = ent->health + 25;
-	
+	//AMMO
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ITEM_INDEX(FindItemByClassname("ammo_bullets"))]--;
+
 }
 
 void Cmd_Return_f(edict_t* ent) { //EALM
 	//Be sure to take away a spell slot
-	
+	//naaa igaf
+	vec3_t forward;
+	if (ent->plevel < 1) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 2 to cast Return\n"); return; }
+	else { gi.cprintf(ent, PRINT_HIGH, "Casted Return\n"); }
 	if (returnbool) {
 		gi.WriteByte(svc_temp_entity);
 		gi.WriteByte(TE_EXPLOSION2);
@@ -991,6 +1027,10 @@ void Cmd_Return_f(edict_t* ent) { //EALM
 		ent->s.origin[0] = returncoords[0];
 		ent->s.origin[1] = returncoords[1];
 		ent->s.origin[2] = returncoords[2];
+		VectorCopy(returnviewangles, ent->s.angles);
+
+		
+		
 		returnbool = 0;
 
 
@@ -999,6 +1039,10 @@ void Cmd_Return_f(edict_t* ent) { //EALM
 		returncoords[0] = ent->s.origin[0];
 		returncoords[1] = ent->s.origin[1];
 		returncoords[2] = ent->s.origin[2];
+		//AngleVectors(, forward, NULL, NULL);
+		VectorCopy(ent->s.angles, returnviewangles);
+
+		
 		returnbool = 1;
 
 		gi.WriteByte(svc_temp_entity);
@@ -1009,17 +1053,24 @@ void Cmd_Return_f(edict_t* ent) { //EALM
 	}
 	//Ooh a swap spell would be sick
 	//but then you'd have to hit stuff :(
+	//na its all cool past beth 
+	//AMMO
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ITEM_INDEX(FindItemByClassname("ammo_bullets"))]-=2;
+
 }
+
 void freeze_think(edict_t* self)
 {
 
 	self->s.frame++;
 	self->nextthink = level.time + FRAMETIME + 10;
-	
+	//IG we should kill them?
 }
 
 void Cmd_Freeze_f(edict_t* ent) {
-
+	if (ent->plevel < 4) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 4 to cast Freeze\n"); return; }
+	else { gi.cprintf(ent, PRINT_HIGH, "Casted Freeze\n"); }
 	vec3_t		start;
 	vec3_t		forward, right;
 	vec3_t		offset;
@@ -1087,11 +1138,223 @@ void Cmd_Freeze_f(edict_t* ent) {
 	//	gi.multicast (start, MULTICAST_PHS);
 	
 
-	/*if (!((int)dmflags->value & DF_INFINITE_AMMO))
-		ent->client->pers.inventory[ent->client->ammo_index]--;
-	*/
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ITEM_INDEX(FindItemByClassname("ammo_grenades"))]--;
+	
+}
+void Cmd_Deathnote_f(edict_t* ent) {
+	edict_t* target = NULL;
+	char* name = gi.args();
+	gi.cprintf(ent, PRINT_HIGH, "deathnote %s\n", name);
+	while ((target = findradius(target, ent->s.origin, 500)) != NULL)
+	{
+		if (target == ent)
+			continue;
+
+		if (!target->takedamage)
+			continue;
+		if(Q_stricmp(target->classname, name) == 0){
+			G_FreeEdict(target);
+			return;
+		}
+	}
 }
 
+void Cmd_GiveSpell_f(edict_t *ent){
+	if (!ent)
+		return;
+	if (ent->plevel < 4) { gi.cprintf(ent, PRINT_HIGH, "You must be at least level 5 to cast Gimmie\n"); return; }
+	else { gi.cprintf(ent, PRINT_HIGH, "Casted Gimmie\n"); }
+	externgivall = true;
+	Cmd_Give_f(ent);
+	externgivall = false;
+	//VectorInverse(ent->client->v_angle);
+	//IDKKKK
+	//throw healthpacks/ammo/powerups?
+
+}
+
+void Cmd_Dropb_f(edict_t* ent) {
+	if (!ent)
+		return;
+	gitem_t* item;
+	item = FindItemByClassname("ammo_bullets");
+	Drop_Ammo(ent, item);
+}
+
+void Cmd_Dropc_f(edict_t* ent) {
+	if (!ent)
+		return;
+	gitem_t* item;
+	item = FindItemByClassname("ammo_cells");
+	Drop_Ammo(ent, item);
+}
+
+void Cmd_Dropg_f(edict_t* ent) {
+	if (!ent)
+		return;
+	gitem_t* item;
+	item = FindItemByClassname("ammo_grenades");
+	Drop_Ammo(ent, item);
+}
+
+void Cmd_Drops_f(edict_t* ent) {
+	if (!ent)
+		return;
+	gitem_t* item;
+	item = FindItemByClassname("ammo_slugs");
+	Drop_Ammo(ent, item);
+}
+void Cmd_Dropr_f(edict_t* ent) {
+	if (!ent)
+		return;
+	gitem_t* item;
+	item = FindItemByClassname("ammo_rockets");
+	Drop_Ammo(ent, item);
+}
+
+void Cmd_SetLevel_f(edict_t* ent)
+{
+	char* name;
+	name = gi.args();
+	int newlev = atoi(name);
+	ent->plevel = newlev;
+}
+
+/*
+void summon_think2(edict_t* self)
+{
+	M_MoveFrame(self);
+	if (self->linkcount != self->monsterinfo.linkcount)
+	{
+		self->monsterinfo.linkcount = self->linkcount;
+		M_CheckGround(self);
+	}
+	M_CatagorizePosition(self);
+	M_WorldEffects(self);
+	M_SetEffects(self);
+
+
+	edict_t* ent = NULL;
+	int ownercount = 0;
+	while ((ent = findradius(ent, self->s.origin, 528)) != NULL) {
+		if (ent == self)
+			continue;
+		if (!ent->takedamage)
+			continue;
+		if (strcmp(ent->classname, "misc_explobox") != 0)
+			continue;
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+			continue;
+		if (ent == self->owner)
+			continue;
+
+		self->enemy = ent;
+
+
+	}
+}
+
+
+void Cmd_Hypnosis_f(edict_t * ent){//i give up this isnt working
+
+		vec3_t		start;
+		vec3_t		forward, right;
+		vec3_t		offset;
+		int			damage;
+		int			kick;
+
+		damage = 150;
+		kick = 250;
+
+
+		AngleVectors(ent->client->v_angle, forward, right, NULL);
+		VectorScale(forward, -3, ent->client->kick_origin);
+		ent->client->kick_angles[0] = -3;
+
+		VectorSet(offset, 0, 7, ent->viewheight - 8);
+		P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+		//fire_rail(ent, start, forward, damage, kick);
+
+		vec3_t		from;
+		vec3_t		end, aimdir;
+		trace_t		tr;
+		edict_t* ignore, * self;
+		int			mask;
+		qboolean	water;
+		self = ent;
+		VectorCopy(forward, aimdir);
+
+
+		VectorMA(start, 8192, aimdir, end);
+		VectorCopy(start, from);
+		ignore = self;
+		water = false;
+		mask = MASK_SHOT | CONTENTS_SLIME | CONTENTS_LAVA;
+		while (ignore)
+		{
+			tr = gi.trace(from, NULL, NULL, end, ignore, mask);
+
+			if (tr.contents & (CONTENTS_SLIME | CONTENTS_LAVA))
+			{
+				mask &= ~(CONTENTS_SLIME | CONTENTS_LAVA);
+				water = true;
+			}
+			else
+			{
+				if ((tr.ent->svflags & SVF_MONSTER) || (tr.ent->client))
+					ignore = tr.ent;
+				else
+					ignore = NULL;
+
+				if ((tr.ent != self) && (tr.ent->takedamage)) {
+					//T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+					tr.ent->monsterinfo.aiflags |= AI_SUMMONED;
+					tr.ent->think = summon_think2;
+					//tr.ent->enemy = NULL;
+					//crashes the game :(
+					
+					self = tr.ent;
+
+					M_MoveFrame(self);
+					if (self->linkcount != self->monsterinfo.linkcount)
+					{
+						self->monsterinfo.linkcount = self->linkcount;
+						M_CheckGround(self);
+					}
+					M_CatagorizePosition(self);
+					M_WorldEffects(self);
+					M_SetEffects(self);
+
+
+					edict_t* ent1 = NULL;
+					int ownercount = 0;
+					while ((ent1 = findradius(ent1, self->s.origin, 528)) != NULL) {
+						if (ent1 == self)
+							continue;
+						if (!ent1->takedamage)
+							continue;
+						if (strcmp(ent1->classname, "misc_explobox") != 0)
+							continue;
+						if (!(ent1->svflags & SVF_MONSTER) && (!ent1->client) && (strcmp(ent1->classname, "misc_explobox") != 0))
+							continue;
+						if (ent1 == self->owner)
+							continue;
+
+						self->enemy = ent1;
+
+
+					}
+					
+
+					//tr.ent->think = freeze_think;
+				}
+			}
+
+			VectorCopy(tr.endpos, from);
+		}
+
+}
 //Useless
 void Cmd_HealTarget_f(edict_t* ent) {
 	if (!ent)
@@ -1108,7 +1371,8 @@ void Cmd_HealTarget_f(edict_t* ent) {
 
 
 	AngleVectors(angles, forward, right, NULL);
-	gi.cprintf(ent, PRINT_HIGH, "%i %i %i origin.\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+	gi.c
+	(ent, PRINT_HIGH, "%i %i %i origin.\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
 	VectorSet(offset, 0, 8, ent->viewheight - 8);
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
 	//fire_bullet(ent, start, forward, 1, 0, 0, 0, MOD_MACHINEGUN);
@@ -1145,7 +1409,20 @@ void Cmd_HealTarget_f(edict_t* ent) {
 	//	gi.cprintf(ent, PRINT_HIGH, "Fuck off.\n");
 	//gi.dprintf("%s at %s, combattarget %s not found\n", self->classname, vtos(self->s.origin), self->combattarget);
 
+}*/
+
+
+void Cmd_whelp1_f(edict_t* ent) {
+
+	if (ent->client->showCustomUI) {
+		ent->client->showCustomUI = false;
+		return;
+	}
+	ent->client->showCustomUI = true;
+
 }
+
+
 /*
 =================
 ClientCommand
@@ -1233,18 +1510,46 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
-	else if (Q_stricmp(cmd, "spawn") == 0)
+	else if (Q_stricmp(cmd, "spawn") == 0) //past here is mine
 		Cmd_Spawn_f(ent);
 	else if (Q_stricmp(cmd, "whelp") == 0)
 		Cmd_whelp_f(ent);
 	else if (Q_stricmp(cmd, "heal") == 0)
 		Cmd_Heal_f(ent);
-	else if (Q_stricmp(cmd, "healtarget") == 0)
-		Cmd_HealTarget_f(ent);
 	else if (Q_stricmp(cmd, "return") == 0)
 		Cmd_Return_f(ent);
 	else if (Q_stricmp(cmd, "freeze") == 0)
 		Cmd_Freeze_f(ent);
+	else if (Q_stricmp(cmd, "tank") == 0)
+		Cmd_Spawn_Tank_f(ent);
+	else if (Q_stricmp(cmd, "soldier") == 0)
+		Cmd_Spawn_Soldier_f(ent);
+	else if (Q_stricmp(cmd, "brain") == 0)
+		Cmd_Spawn_Brain_f(ent);
+	else if (Q_stricmp(cmd, "parasite") == 0)
+		Cmd_Spawn_Parasite_f(ent);
+	else if (Q_stricmp(cmd, "supertank") == 0)
+		Cmd_Spawn_Supertank_f(ent);
+	else if (Q_stricmp(cmd, "dropb") == 0)
+		Cmd_Dropb_f(ent);
+	else if (Q_stricmp(cmd, "dropc") == 0)
+		Cmd_Dropc_f(ent);
+	else if (Q_stricmp(cmd, "dropg") == 0)
+		Cmd_Dropg_f(ent);
+	else if (Q_stricmp(cmd, "drops") == 0)
+		Cmd_Drops_f(ent);
+	else if (Q_stricmp(cmd, "dropr") == 0)
+		Cmd_Dropr_f(ent);
+	else if (Q_stricmp(cmd, "showxp") == 0)
+		Cmd_drawxp_f(ent);
+	else if (Q_stricmp(cmd, "whelp1") == 0)
+		Cmd_whelp1_f(ent);
+	else if (Q_stricmp(cmd, "givespell") == 0)
+		Cmd_GiveSpell_f(ent);
+	else if (Q_stricmp(cmd, "setlevel") == 0)
+		Cmd_SetLevel_f(ent);
+	else if (Q_stricmp(cmd, "deathnote") == 0)
+		Cmd_Deathnote_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

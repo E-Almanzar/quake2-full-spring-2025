@@ -910,6 +910,7 @@ struct gclient_s
 	qboolean	showinventory;		// set layout stat
 	qboolean	showhelp;
 	qboolean	showhelpicon;
+	qboolean	showCustomUI;
 
 	int			ammo_index;
 
@@ -1127,5 +1128,9 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+	//EALM
+	int xp;
+	int plevel;
+
 };
 

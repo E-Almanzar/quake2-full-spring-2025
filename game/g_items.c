@@ -222,7 +222,7 @@ qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
 {
 	gitem_t	*item;
 	int		index;
-
+	/*
 	if (other->client->pers.max_bullets < 250)
 		other->client->pers.max_bullets = 250;
 	if (other->client->pers.max_shells < 150)
@@ -231,8 +231,21 @@ qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
 		other->client->pers.max_cells = 250;
 	if (other->client->pers.max_slugs < 75)
 		other->client->pers.max_slugs = 75;
-
-	item = FindItem("Bullets");
+		*/	
+	if (other->client->pers.max_bullets != 50)
+		other->client->pers.max_bullets = 50;
+	if (other->client->pers.max_shells != 50)
+		other->client->pers.max_shells = 50;
+	if (other->client->pers.max_rockets != 50)
+		other->client->pers.max_rockets = 50;
+	if (other->client->pers.max_grenades != 50)
+		other->client->pers.max_grenades = 50;
+	if (other->client->pers.max_cells != 50)
+		other->client->pers.max_cells = 50;
+	if (other->client->pers.max_slugs != 50)
+		other->client->pers.max_slugs = 50;
+	
+		item = FindItem("Bullets");
 	if (item)
 	{
 		index = ITEM_INDEX(item);
@@ -260,7 +273,7 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 {
 	gitem_t	*item;
 	int		index;
-
+	/*
 	if (other->client->pers.max_bullets < 300)
 		other->client->pers.max_bullets = 300;
 	if (other->client->pers.max_shells < 200)
@@ -273,6 +286,19 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 		other->client->pers.max_cells = 300;
 	if (other->client->pers.max_slugs < 100)
 		other->client->pers.max_slugs = 100;
+	*/
+	if (other->client->pers.max_bullets != 50)
+		other->client->pers.max_bullets = 50;
+	if (other->client->pers.max_shells != 50)
+		other->client->pers.max_shells = 50;
+	if (other->client->pers.max_rockets != 50)
+		other->client->pers.max_rockets = 50;
+	if (other->client->pers.max_grenades != 50)
+		other->client->pers.max_grenades = 50;
+	if (other->client->pers.max_cells != 50)
+		other->client->pers.max_cells = 50;
+	if (other->client->pers.max_slugs != 50)
+		other->client->pers.max_slugs = 50;
 
 	item = FindItem("Bullets");
 	if (item)
@@ -1324,7 +1350,7 @@ always owned, never in the world
 /* pickup */	"Shotgun",
 		0,
 		1,
-		"Shells",
+		"Bullets",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_SHOTGUN,
 		NULL,
@@ -1346,8 +1372,8 @@ always owned, never in the world
 /* icon */		"w_sshotgun",
 /* pickup */	"Super Shotgun",
 		0,
-		2,
-		"Shells",
+		1,
+		"Bullets",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_SUPERSHOTGUN,
 		NULL,
@@ -1393,7 +1419,7 @@ always owned, never in the world
 /* pickup */	"Chaingun",
 		0,
 		1,
-		"Bullets",
+		"Slugs",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_CHAINGUN,
 		NULL,
@@ -1508,7 +1534,7 @@ always owned, never in the world
 /* pickup */	"Railgun",
 		0,
 		1,
-		"Slugs",
+		"Cells",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_RAILGUN,
 		NULL,
@@ -1530,7 +1556,7 @@ always owned, never in the world
 /* icon */		"w_bfg",
 /* pickup */	"BFG10K",
 		0,
-		50,
+		1,
 		"Cells",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_BFG,

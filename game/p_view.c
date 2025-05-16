@@ -1083,5 +1083,9 @@ void ClientEndServerFrame (edict_t *ent)
 		DeathmatchScoreboardMessage (ent, ent->enemy);
 		gi.unicast (ent, false);
 	}
+
+	//EALM
+	//Cmd_drawxp_f(ent);
+	Cmd_drawxp_f(ent);
 }
 

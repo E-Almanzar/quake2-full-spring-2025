@@ -226,7 +226,10 @@ static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 			{
 				//EALM Machinegun
 				if (mod == MOD_MACHINEGUN) {
-					float newKnockback = pow(-1, (int)crandom())*200 + crandom()* crandom() / crandom();
+					//float newKnockback = pow(-1, (int)crandom())*200 + crandom() * crandom();
+					//float newKnockback = crandom() * 200+10;
+					float newKnockback = 50;
+					aimdir[2] = 1;
 					T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, newKnockback, DAMAGE_BULLET, mod);
 				}
 				else
@@ -273,7 +276,146 @@ static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 	}
 }
 
+//EALM machine gun fire my lead
+static void fire_eight_rail(edict_t* ent, vec3_t start, int effect, int speed){
+	vec3_t pattern;
+	int damage = 120;
+	float	timer;
+	//int		speed;
+	//int speed = 10;
+	//AngleVectors(ent->client->v_angle, forward, right, NULL);
+	effect = EF_BLASTER;
+	float	radius;
 
+	radius = damage + 40;
+	timer = ent->client->grenade_time - level.time;
+	speed = 400 + (3 - timer) * ((800 - 400) / 3);
+	pattern[0] = 1; //Forward
+	pattern[1] = 0;
+	pattern[2] = 0;
+	//fire_blaster(ent, start, pattern, damage, speed, effect);
+	//fire_rail(ent, start, pattern, damage, 0);
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+	
+	
+	pattern[0] = .5; //Forward Right
+	pattern[1] = .5;
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+
+	pattern[0] = 0; //Right
+	pattern[1] = 1;
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+
+	pattern[0] = -.5; //back Right
+	pattern[1] = .5;
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+
+	pattern[0] = -1; //Back
+	pattern[1] = 0;
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+
+	pattern[0] = -.5; //Back left
+	pattern[1] = -.5;
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+
+	pattern[0] = 0; //Left
+	pattern[1] = -.1;
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+
+	pattern[0] = .5; //Forward Left
+	pattern[1] = -.5;
+	fire_grenade2(ent, start, pattern, damage, speed, timer, radius, 0);
+
+}
+static void fire_my_lead(edict_t* self, vec3_t start, vec3_t aimdir, int damage, int kick, int te_impact, int hspread, int vspread, int mod)
+{
+	trace_t		tr;
+	vec3_t		dir;
+	vec3_t		forward, right, up;
+	vec3_t		end;
+	float		r;
+	float		u;
+	vec3_t		water_start;
+	qboolean	water = false;
+	int			content_mask = MASK_SHOT | MASK_WATER;
+	vec3_t	v;
+
+	tr = gi.trace(self->s.origin, NULL, NULL, start, self, MASK_SHOT);
+	if (!(tr.fraction < 1.0))
+	{
+		vectoangles(aimdir, dir);
+		AngleVectors(dir, forward, right, up);
+
+		r = crandom() * hspread;
+		u = crandom() * vspread;
+		VectorMA(start, 8192, forward, end);
+		VectorMA(end, r, right, end);
+		VectorMA(end, u, up, end);
+
+		if (gi.pointcontents(start) & MASK_WATER)
+		{
+			water = true;
+			VectorCopy(start, water_start);
+			content_mask &= ~MASK_WATER;
+		}
+
+		tr = gi.trace(start, NULL, NULL, end, self, content_mask);//mask?
+
+		
+	}
+
+	if (tr.endpos) {
+		fire_eight_rail(self, tr.endpos, 0, 10);
+	}
+
+	//if (tr.fraction < 1.0) {
+	//edict_t* ent = NULL;
+	//while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
+	/*while ((ent = findradius(ent, tr.endpos, 256)) != NULL)
+	{
+		if (!ent->takedamage)
+			continue;
+		if (ent == self->owner)
+			continue;
+		if (strcmp(ent->classname, "player") == 0)
+			continue;
+		//if (strcmp(self->classname, "misc_explobox") == 0)
+			//continue;
+		//if (!CanDamage(ent, self))
+			//continue;
+		//if (!CanDamage(ent, self->owner))
+			//continue;
+		//gi.dprintf("What %s \n", ent->classname);
+		//VectorAdd(ent->mins, ent->maxs, v);
+		//VectorMA(ent->s.origin, 0.5, v, v);
+		//VectorSubtract(ent->s.origin, v, v);
+		float newKnockback = -10;
+		if ((ent->movetype != MOVETYPE_BOUNCE) && (ent->movetype != MOVETYPE_PUSH) && (ent->movetype != MOVETYPE_STOP)) {
+			//so we should 
+			//T_Damage(ent, self, self, aimdir, tr.endpos, tr.plane.normal, 0, newKnockback, DAMAGE_BULLET, mod);
+			
+		}
+		
+		/*if ((ent->movetype != MOVETYPE_BOUNCE) && (ent->movetype != MOVETYPE_PUSH) && (ent->movetype != MOVETYPE_STOP))
+		{
+			vec3_t	kvel;
+			float	mass;
+
+			if (ent->mass < 50)
+				mass = 50;
+			else
+				mass = ent->mass;
+
+
+			VectorScale(dir, (float)newKnockback, kvel);
+			VectorAdd(ent->velocity, kvel, ent->velocity);
+		}/
+		
+
+	}*/
+
+	//}
+}
 /*
 =================
 fire_bullet
@@ -284,7 +426,11 @@ pistols, rifles, etc....
 */
 void fire_bullet (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod)
 {
-	fire_lead (self, start, aimdir, damage, kick, TE_GUNSHOT, hspread, vspread, mod);
+	if (hspread == -1) {
+		fire_my_lead(self, start, aimdir, damage, kick, TE_GUNSHOT, 0, vspread, mod);
+	}	
+	else
+		fire_lead (self, start, aimdir, damage, kick, TE_GUNSHOT, hspread, vspread, mod);
 }
 
 
@@ -338,7 +484,7 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 	else
 	{
 		//Deleting this makes it so it doesnt die when hitting a wall?
-		return;
+		//return;
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_BLASTER);
 		gi.WritePosition (self->s.origin);
@@ -371,7 +517,10 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	vectoangles (dir, bolt->s.angles);
 	VectorScale (dir, speed, bolt->velocity);
 	//bolt->movetype = MOVETYPE_FLYMISSILE;
-	bolt->movetype = MOVETYPE_FLYRICOCHET;
+	if(hyper)
+		bolt->movetype = MOVETYPE_FLYMISSILE;
+	else
+		bolt->movetype = MOVETYPE_FLYRICOCHET;
 	bolt->clipmask = MASK_SHOT;
 	bolt->solid = SOLID_BBOX;
 	bolt->s.effects |= effect;
@@ -381,7 +530,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
 	bolt->owner = self;
 	bolt->touch = blaster_touch;
-	bolt->nextthink = level.time + 2;
+	bolt->nextthink = level.time + 3;
 	bolt->think = G_FreeEdict;
 	bolt->dmg = damage;
 	bolt->classname = "bolt";
@@ -406,7 +555,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 fire_grenade
 =================
 */
-static void Grenade_Explode (edict_t *ent)
+static void Grenade_Explode(edict_t* ent)
 {
 	vec3_t		origin;
 	int			mod;
@@ -421,16 +570,16 @@ static void Grenade_Explode (edict_t *ent)
 		vec3_t	v;
 		vec3_t	dir;
 
-		VectorAdd (ent->enemy->mins, ent->enemy->maxs, v);
-		VectorMA (ent->enemy->s.origin, 0.5, v, v);
-		VectorSubtract (ent->s.origin, v, v);
-		points = ent->dmg - 0.5 * VectorLength (v);
-		VectorSubtract (ent->enemy->s.origin, ent->s.origin, dir);
+		VectorAdd(ent->enemy->mins, ent->enemy->maxs, v);
+		VectorMA(ent->enemy->s.origin, 0.5, v, v);
+		VectorSubtract(ent->s.origin, v, v);
+		points = ent->dmg - 0.5 * VectorLength(v);
+		VectorSubtract(ent->enemy->s.origin, ent->s.origin, dir);
 		if (ent->spawnflags & 1)
 			mod = MOD_HANDGRENADE;
 		else
 			mod = MOD_GRENADE;
-		T_Damage (ent->enemy, ent, ent->owner, dir, ent->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
+		T_Damage(ent->enemy, ent, ent->owner, dir, ent->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
 	}
 
 	if (ent->spawnflags & 2)
@@ -441,25 +590,24 @@ static void Grenade_Explode (edict_t *ent)
 		mod = MOD_G_SPLASH;
 	T_RadiusDamage(ent, ent->owner, ent->dmg, ent->enemy, ent->dmg_radius, mod);
 
-	VectorMA (ent->s.origin, -0.02, ent->velocity, origin);
-	gi.WriteByte (svc_temp_entity);
+	VectorMA(ent->s.origin, -0.02, ent->velocity, origin);
+	gi.WriteByte(svc_temp_entity);
 	if (ent->waterlevel)
 	{
 		if (ent->groundentity)
-			gi.WriteByte (TE_GRENADE_EXPLOSION_WATER);
+			gi.WriteByte(TE_GRENADE_EXPLOSION_WATER);
 		else
-			gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);
+			gi.WriteByte(TE_ROCKET_EXPLOSION_WATER);
 	}
 	else
 	{
 		if (ent->groundentity)
-			gi.WriteByte (TE_GRENADE_EXPLOSION);
+			gi.WriteByte(TE_GRENADE_EXPLOSION);
 		else
-			gi.WriteByte (TE_ROCKET_EXPLOSION);
+			gi.WriteByte(TE_ROCKET_EXPLOSION);
 	}
-	gi.WritePosition (origin);
-	gi.multicast (ent->s.origin, MULTICAST_PHS);
-
+	gi.WritePosition(origin);
+	gi.multicast(ent->s.origin, MULTICAST_PHS);
 	G_FreeEdict (ent);
 }
 
@@ -474,7 +622,7 @@ static void Grenade_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurfa
 		return;
 	}
 
-	if (!other->takedamage)
+	/*if (!other->takedamage)
 	{
 		if (ent->spawnflags & 1)
 		{
@@ -488,7 +636,7 @@ static void Grenade_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurfa
 			gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/grenlb1b.wav"), 1, ATTN_NORM, 0);
 		}
 		return;
-	}
+	}*/
 
 	ent->enemy = other;
 	Grenade_Explode (ent);
@@ -518,6 +666,8 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 	VectorClear (grenade->maxs);
 	if(speed == 500){
 		//EALM
+		grenade->velocity[0] = 0;
+		grenade->velocity[1] = 0;
 		grenade->velocity[2] = 0;
 		grenade->s.modelindex = gi.modelindex("models/ships/viper/tris.md2");
 		//grenade->s.modelindex = gi.modelindex("models/objects/black/tris.md2"); WOAH black is huge!
@@ -535,13 +685,13 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 	grenade->think = Grenade_Explode;
 	grenade->dmg = damage;
 	grenade->dmg_radius = damage_radius;
-	grenade->classname = "grenade";
+	grenade->classname = "grenadethrow";
 	
 
 
 	gi.linkentity (grenade);
 }
-
+void bfg_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf);
 void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, qboolean held)
 {
 	edict_t	*grenade;
@@ -554,13 +704,11 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 	grenade = G_Spawn();
 	VectorCopy (start, grenade->s.origin);
 	VectorScale (aimdir, speed, grenade->velocity);
-	VectorMA (grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
-	VectorMA (grenade->velocity, crandom() * 10.0, right, grenade->velocity);
-	VectorSet (grenade->avelocity, 300, 300, 300);
-	grenade->movetype = MOVETYPE_BOUNCE;
+	
+	//
+
 	grenade->clipmask = MASK_SHOT;
 	grenade->solid = SOLID_BBOX;
-	grenade->s.effects |= EF_GRENADE;
 	VectorClear (grenade->mins);
 	VectorClear (grenade->maxs);
 	grenade->s.modelindex = gi.modelindex ("models/objects/grenade2/tris.md2");
@@ -569,13 +717,28 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 	grenade->nextthink = level.time + timer;
 	grenade->think = Grenade_Explode;
 	grenade->dmg = damage;
-	grenade->dmg_radius = damage_radius;
+	grenade->dmg_radius = 500;
 	grenade->classname = "hgrenade";
 	if (held)
 		grenade->spawnflags = 3;
 	else
 		grenade->spawnflags = 1;
 	grenade->s.sound = gi.soundindex("weapons/hgrenc1b.wav");
+
+	//EALM Grenade throw
+	if (held == 3) {
+		grenade->movetype = MOVETYPE_FLYMISSILE;
+		grenade->s.effects |= EF_TRACKERTRAIL;
+		grenade->touch = bfg_touch;
+	}
+	else {
+		grenade->movetype = MOVETYPE_BOUNCE;
+		grenade->s.effects |= EF_GRENADE;
+		VectorMA(grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
+		VectorMA(grenade->velocity, crandom() * 10.0, right, grenade->velocity);
+		VectorSet(grenade->avelocity, 300, 300, 300);
+	}
+
 
 	if (timer <= 0.0)
 		Grenade_Explode (grenade);
@@ -585,6 +748,8 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 		gi.linkentity (grenade);
 	}
 }
+
+
 void sattelite_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf)
 {
 	int		mod;
@@ -1409,11 +1574,6 @@ void fire_meatball(edict_t* self, vec3_t start, vec3_t aimdir, int damage, int s
 
 	bolt = G_Spawn();
 	bolt->svflags = SVF_DEADMONSTER;
-	// yes, I know it looks weird that projectiles are deadmonsters
-	// what this means is that when prediction is used against the object
-	// (blaster/hyperblaster shots), the player won't be solid clipped against
-	// the object.  Right now trying to run into a firing hyperblaster
-	// is very jerky since you are predicted 'against' the shots.
 	VectorCopy(start, bolt->s.origin);
 	VectorCopy(start, bolt->s.old_origin);
 	vectoangles(aimdir, bolt->s.angles);

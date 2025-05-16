@@ -31,6 +31,7 @@ void weapon_grenade_fire (edict_t *ent, qboolean held);
 void fire_design(edict_t* self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper);
 void fire_flat_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, int speed);
 void fire_up_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, float stepValue);
+void giveItembyName(edict_t* ent, char* name);
 int design = 0;
 //EALM
 static void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
@@ -233,7 +234,7 @@ void ChangeWeapon (edict_t *ent)
 =================
 NoAmmoWeaponChange
 =================
-*/
+
 void NoAmmoWeaponChange (edict_t *ent)
 {
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
@@ -273,6 +274,47 @@ void NoAmmoWeaponChange (edict_t *ent)
 		return;
 	}
 	ent->client->newweapon = FindItem ("blaster");
+}*/
+
+void NoAmmoWeaponChange(edict_t* ent)//1 is bullets, 2 is slugs, 3 is grenade, 4 is cells
+{
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("railgun"))])
+	{
+		ent->client->newweapon = FindItem("railgun");
+		return;
+	}
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("hyperblaster"))])
+	{
+		ent->client->newweapon = FindItem("hyperblaster");
+		return;
+	}
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("cells"))]				//4 carpet bomb
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("chaingun"))])
+	{
+		ent->client->newweapon = FindItem("chaingun");
+		return;
+	}
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("bullets"))]			//1 wind 
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("machinegun"))])
+	{
+		ent->client->newweapon = FindItem("machinegun");
+		return;
+	}
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))] > 1			//floaty bomb
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("super shotgun"))])
+	{
+		ent->client->newweapon = FindItem("super shotgun");
+		return;
+	}
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("bullets"))]			//gib meatball
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("shotgun"))])
+	{
+		ent->client->newweapon = FindItem("shotgun");
+		return;
+	}
+	ent->client->newweapon = FindItem("blaster");
 }
 
 /*
@@ -531,6 +573,65 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		if (ent->client->ps.gunframe == FRAME_IDLE_FIRST+1)
 			ent->client->weaponstate = WEAPON_READY;
 	}
+
+	//EALM drop ur exp here
+	if (!ent->xp) {
+		ent->xp = 0;
+	}
+	if(!ent->plevel){
+		ent->plevel;
+	}
+	ent->xp++;//EALM xp
+	if (ent->xp % 50 == 0) {
+		ent->xp = 0;
+		ent->plevel++;
+		//were gonna do it the old fashioned way?
+		switch (ent->plevel) {
+		case(1): giveItembyName(ent, "shotgun"); break;
+		case(2): giveItembyName(ent, "super shotgun"); break;
+		case(3): giveItembyName(ent, "machinegun"); break;
+		case(4): giveItembyName(ent, "grenade launcher"); break;
+		case(5): giveItembyName(ent, "railgun"); break;
+		case(6): giveItembyName(ent, "grenade"); break;
+		case(7): giveItembyName(ent, "rocket launcher"); break;
+		case(8): giveItembyName(ent, "bfg10k"); break;
+		case(9): giveItembyName(ent, "chaingun"); break;
+		}
+		/*if (ent->plevel == 1) {
+			giveItembyName(ent, "shotgun")
+		}*/
+
+
+	}
+}
+void giveItembyName(edict_t* ent, char* name) {
+	gitem_t* it = FindItem(name);
+	edict_t* it_ent;
+	int index;
+	if (!it)
+	{
+			gi.cprintf(ent, PRINT_HIGH, "unknown item\n");
+			return;
+	}
+	index = ITEM_INDEX(it);
+
+	if (it->flags & IT_AMMO || (strcmp(it->classname, "grenade launcher") == 0))
+	{
+		if (gi.argc() == 3)
+			ent->client->pers.inventory[index] = atoi(gi.argv(2));
+		else
+			ent->client->pers.inventory[index] += it->quantity;
+	}
+	else
+	{
+		it_ent = G_Spawn();
+		it_ent->classname = it->classname;
+		SpawnItem(it_ent, it);
+		Touch_Item(it_ent, ent, NULL, NULL);
+		if (it_ent->inuse)
+			G_FreeEdict(it_ent);
+	}
+
 }
 
 
@@ -545,6 +646,7 @@ GRENADE
 #define GRENADE_TIMER		3.0
 #define GRENADE_MINSPEED	400
 #define GRENADE_MAXSPEED	800
+
 
 void weapon_grenade_fire (edict_t *ent, qboolean held)
 {
@@ -566,8 +668,13 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 
 	timer = ent->client->grenade_time - level.time;
 	speed = GRENADE_MINSPEED + (GRENADE_TIMER - timer) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
-	fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
-
+	fire_grenade2 (ent, start, forward, damage, 500, timer, radius, 3);
+	
+	//Hand throw blaster
+	//fire_blaster(ent, start, forward, damage, 1000, EF_BLASTER, 1);
+	
+	
+	
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 
@@ -711,7 +818,7 @@ GRENADE LAUNCHER
 
 void weapon_grenadelauncher_fire (edict_t *ent)
 {
-	vec3_t	offset;
+	/*vec3_t	offset;
 	vec3_t	forward, right;
 	vec3_t	start;
 	int		damage = 120;
@@ -738,7 +845,72 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	ent->client->ps.gunframe++;
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+	*/
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage;
+	int			kick;
 
+	damage = 150;
+	kick = 250;
+
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+	VectorScale(forward, -3, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -3;
+
+	VectorSet(offset, 0, 7, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	//fire_rail(ent, start, forward, damage, kick);
+
+	vec3_t		from;
+	vec3_t		end, aimdir;
+	trace_t		tr;
+	edict_t* ignore, * self;
+	int			mask;
+	qboolean	water;
+	self = ent;
+	VectorCopy(forward, aimdir);
+
+
+	VectorMA(start, 8192, aimdir, end);
+	VectorCopy(start, from);
+	ignore = self;
+	water = false;
+	mask = MASK_SHOT | CONTENTS_SLIME | CONTENTS_LAVA;
+
+	tr = gi.trace(from, NULL, NULL, end, ignore, mask);
+
+	if (tr.contents & (CONTENTS_SLIME | CONTENTS_LAVA))
+	{
+		mask &= ~(CONTENTS_SLIME | CONTENTS_LAVA);
+		water = true;
+	}
+	else
+	{
+		if ((tr.ent->svflags & SVF_MONSTER) || (tr.ent->client))
+			ignore = tr.ent;
+		else
+			ignore = NULL;
+
+		if ((tr.ent != self) && (tr.ent->takedamage)) {
+			//T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+			BecomeExplosion1(tr.ent);
+		}
+	}
+	
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_GRENADE | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+	//ent->client->pers.inventory[ent->client->ammo_index]--;
+
+	//AMMO
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 }
@@ -781,7 +953,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet(offset, 16, 16, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
 
@@ -807,6 +979,7 @@ void Weapon_RocketLauncher (edict_t *ent)
 	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire);
 }
 
+void hyperblaster_fire(edict_t * self, vec3_t start, vec3_t origin);
 
 /*
 ======================================================================
@@ -825,15 +998,27 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	if (is_quad)
 		damage *= 4;
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 24, 8, ent->viewheight-8);
+	//VectorSet(offset, 24, 8, ent->viewheight-8);
+	
+	VectorSet(offset, 0, 0, ent->viewheight - 5);
 	VectorAdd (offset, g_offset, offset);
+
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
 	//EALM
-	fire_design(ent, start, forward, damage, 1000, effect, hyper);
+	if(!hyper)
+		fire_design(ent, start, forward, damage, 1000, effect, hyper);
+	else{
+	//EALM Hyperblaster spin gun?
+		fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+		//hyperblaster_fire(ent, start, forward);
+		ent->velocity[2] += 30;
+	
+	
+	}
 	/*fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
 
 	start[0] += right[0] *20;
@@ -952,9 +1137,10 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 			else
 				damage = 20;
 			Blaster_Fire (ent, offset, damage, true, effect);
-			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-				ent->client->pers.inventory[ent->client->ammo_index]--;
-
+			if (!((int)dmflags->value & DF_INFINITE_AMMO)) {
+				//ent->client->pers.inventory[ent->client->ammo_index]--;
+				//hyperblaster ammo?
+			}
 			ent->client->anim_priority = ANIM_ATTACK;
 			if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
 			{
@@ -1094,6 +1280,7 @@ void Weapon_Machinegun (edict_t *ent)
 	Weapon_Generic (ent, 3, 5, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
 }
 
+int chainguncount = 0;
 void Chaingun_Fire (edict_t *ent)
 {
 	int			i;
@@ -1197,20 +1384,27 @@ void Chaingun_Fire (edict_t *ent)
 		u = crandom()*4;
 		VectorSet(offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-
-		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		fire_bullet(ent, start, forward, damage, kick, -1, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+		//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
 	}
 
 	// send muzzle flash
-	gi.WriteByte (svc_muzzleflash);
+	/*gi.WriteByte(svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	gi.WriteByte ((MZ_CHAINGUN1 + shots - 1) | is_silenced);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
-
+	*/
+	//TESTING Remove ammo
+	if (chainguncount < 15) {
+		chainguncount+=shots;
+	}
+	else{
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-		ent->client->pers.inventory[ent->client->ammo_index] -= shots;
+		ent->client->pers.inventory[ent->client->ammo_index] -= 1;
+		chainguncount = 0;
+	}
 }
 
 
@@ -1309,8 +1503,7 @@ void weapon_supershotgun_fire (edict_t *ent)
 	radius = damage + 40;
 	if (is_quad)
 		damage *= 4;
-
-	VectorSet(offset, 8, 8, ent->viewheight - 8);
+	VectorSet(offset, 128, 0, ent->viewheight - 8);
 	AngleVectors(ent->client->v_angle, forward, right, NULL);
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
 
@@ -1319,7 +1512,7 @@ void weapon_supershotgun_fire (edict_t *ent)
 
 	//EALM Shotgun Grenade?
 	int speed = 500;
-	fire_grenade(ent, start, forward, damage, speed, 2.5, radius*10);
+	fire_grenade(ent, start, forward, damage, speed, 1.5, radius*10);
 
 
 	gi.WriteByte(svc_muzzleflash);
@@ -1474,12 +1667,9 @@ void weapon_bfg_fire (edict_t *ent)
 	vec3_t	offset, start;
 	vec3_t	forward, right;
 	int		damage;
-	float	damage_radius = 1000;
+	float	damage_radius = 500;
 
-	if (deathmatch->value)
-		damage = 200;
-	else
-		damage = 500;
+	damage = 75;
 
 	if (ent->client->ps.gunframe == 9)
 	{
@@ -1497,11 +1687,11 @@ void weapon_bfg_fire (edict_t *ent)
 
 	// cells can go down during windup (from power armor hits), so
 	// check again and abort firing if we don't have enough now
-	if (ent->client->pers.inventory[ent->client->ammo_index] < 50)
+	/*if (ent->client->pers.inventory[ent->client->ammo_index] < 50)
 	{
 		ent->client->ps.gunframe++;
 		return;
-	}
+	}*/
 
 	if (is_quad)
 		damage *= 4;
@@ -1513,10 +1703,12 @@ void weapon_bfg_fire (edict_t *ent)
 	// make a big pitch kick with an inverse fall
 	ent->client->v_dmg_pitch = -40;
 	ent->client->v_dmg_roll = crandom()*8;
-	ent->client->v_dmg_time = level.time + DAMAGE_TIME;
+	ent->client->v_dmg_time = level.time + 0.2;/// DAMAGE_TIME;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet(offset, -64, 0, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	//EALM
+	forward[2] = -1;
 	fire_bfg (ent, start, forward, damage, 400, damage_radius);
 
 	ent->client->ps.gunframe++;
@@ -1524,7 +1716,7 @@ void weapon_bfg_fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-		ent->client->pers.inventory[ent->client->ammo_index] -= 50;
+		ent->client->pers.inventory[ent->client->ammo_index] -= 1;
 }
 
 void Weapon_BFG (edict_t *ent)
@@ -1564,13 +1756,13 @@ void fire_design(edict_t* ent, vec3_t start, vec3_t dir, int damage, int speed, 
 	}
 	else if (design == 2) {//Flat
 
-		fire_flat_eight(ent, start, effect, hyper, 10);
+		fire_flat_eight(ent, start, effect, hyper, 120);
 		start[1] += 10;
-		fire_flat_eight(ent, start, effect, hyper, 10);
+		fire_flat_eight(ent, start, effect, hyper, 120);
 		//start[2] += 10;
 		//fire_flat_eight(ent, start, effect, hyper);
 		start[1] -= 20;
-		fire_flat_eight(ent, start, effect, hyper, 30);
+		fire_flat_eight(ent, start, effect, hyper, 120);
 		//start[2] -= 20;
 		//fire_flat_eight(ent, start, effect, hyper);
 		design++;
@@ -1635,7 +1827,7 @@ void fire_flat_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, int
 void fire_up_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, float stepValue) {
 	vec3_t pattern;
 	int damage = 50;
-	int speed = 1000;
+	int speed = 75;
 	//float stepValue = .5;
 
 	//AngleVectors(ent->client->v_angle, forward, right, NULL);
@@ -1675,6 +1867,58 @@ void fire_up_eight(edict_t* ent, vec3_t start, int effect, qboolean hyper, float
 	pattern[0] = stepValue; //Forward Left
 	pattern[1] = -stepValue;
 	fire_blaster(ent, start, pattern, damage, speed, effect, hyper);
+
+}
+
+void hyperblaster_fire(edict_t* self, vec3_t start, vec3_t origin) {
+
+		vec3_t		from;
+		vec3_t		end, temp, aimdir;
+		trace_t		tr;
+		edict_t* ignore;
+		int			mask;
+		qboolean	water;
+		int damage = 50;
+		AngleVectors(self->client->v_angle, aimdir, NULL, NULL);
+		VectorMA(start, 8192, aimdir, end);
+		VectorCopy(start, from);
+		ignore = self;
+		water = false;
+		mask = MASK_SHOT | CONTENTS_SLIME | CONTENTS_LAVA;
+
+
+		tr = gi.trace(from, NULL, NULL, end, ignore, mask);
+
+
+		if ((tr.ent->svflags & SVF_MONSTER) || (tr.ent->client))
+			ignore = tr.ent;
+		else
+			ignore = NULL;
+
+		if ((tr.ent != self) && (tr.ent->takedamage)) {
+	
+			//T_Damage(tr.ent, self, self, aimdir, tr.endpos, aimdir, damage, 0, 0, MOD_RAILGUN);
+		}
+		int i = 1;
+
+		if (tr.ent && tr.ent->takedamage) {
+			i = -1;
+		}
+
+		aimdir[0] = tr.plane.normal[0]*i;
+		aimdir[1] = tr.plane.normal[1]*i;
+		aimdir[2] = tr.plane.normal[2]*i;
+		
+		tr.endpos[0] += tr.plane.normal[0]*10;
+		tr.endpos[1] += tr.plane.normal[1]*10;
+		tr.endpos[2] += tr.plane.normal[2]*10;
+
+		//MAKE IT SO THAT IT DOESNT CLIP THE WALL!! TODO 
+		fire_blaster(self, tr.endpos, aimdir, damage, 500, EF_BLASTER, 1);
+
+			//VectorCopy(tr.endpos, from);
+		//TE_GRAPPLE_CABLE;
+
 
 }
 //======================================================================

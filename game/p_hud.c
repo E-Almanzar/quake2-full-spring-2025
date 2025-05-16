@@ -277,6 +277,7 @@ void Cmd_Score_f (edict_t *ent)
 {
 	ent->client->showinventory = false;
 	ent->client->showhelp = false;
+	ent->client->showCustomUI = false;
 
 	if (!deathmatch->value && !coop->value)
 		return;
@@ -354,6 +355,7 @@ void Cmd_Help_f (edict_t *ent)
 
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
+	ent->client->showCustomUI = false;
 
 	if (ent->client->showhelp && (ent->client->pers.game_helpchanged == game.helpchanged))
 	{
@@ -371,6 +373,7 @@ void Cmd_whelp_f(edict_t* ent) //EALM
 
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
+	ent->client->showCustomUI = false;
 
 	if (ent->client->showhelp && (ent->client->pers.game_helpchanged == game.helpchanged))
 	{
@@ -387,7 +390,7 @@ void Cmd_whelp_f(edict_t* ent) //EALM
 	char	string[1024];
 	char* sk = "MEGISTUS";
 	char * message1 = "BEHOLD! THE WIZARD ARRIVES", * message2 = "USE YOUR RESOURCES WISELY.\n YOU HAVE SPELLS LEVELS 1-5";
-	char * message3 = "1-9 FOR COMBAT, KEYSTROKES t-o\nFOR UTILITY & g-l FOR SUMMONS";
+	char * message3 = "1-9 FOR COMBAT, KEYSTROKES \nt-o FOR UTILITY & \ng-l FOR SUMMONS";
 													
 	//gi.cprintf(ent, PRINT_HIGH, "cprintf%s\n");
 
@@ -397,15 +400,13 @@ void Cmd_whelp_f(edict_t* ent) //EALM
 		"xv 0 yv 24 cstring2 \"%s\" "		// level name
 		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
 		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ",
+		"xv 50 yv 164 string2 \" xp       xpReq     level\" "
+		"xv 50 yv 172 string2 \" %i/50     %i        %i/?\" ",
 		sk,
 		message1,
 		message2,
 		message3,
-		"", "",
-		"", "",
-		"", "");
+		ent->xp, 50 - ent->xp, ent->plevel);
 
 	gi.WriteByte(svc_layout);
 	gi.WriteString(string);
@@ -544,7 +545,7 @@ void G_SetStats (edict_t *ent)
 	}
 	else
 	{
-		if (ent->client->showscores || ent->client->showhelp)
+		if (ent->client->showscores || ent->client->showhelp || ent->client->showCustomUI)
 			ent->client->ps.stats[STAT_LAYOUTS] |= 1;
 		if (ent->client->showinventory && ent->client->pers.health > 0)
 			ent->client->ps.stats[STAT_LAYOUTS] |= 2;
@@ -616,3 +617,61 @@ void G_SetSpectatorStats (edict_t *ent)
 		cl->ps.stats[STAT_CHASE] = 0;
 }
 
+//EALM Hud Change?
+void Cmd_drawxp_f(edict_t* ent)
+{
+	//char	string[1024];
+	//int xpt = ent->xp;
+
+	// send the layout
+	/*Com_sprintf(string, sizeof(string),
+		"xv 202 yv 12 string2 \"%s\"" 
+		"xv 0 yv 24 cstring2 \"Level: %s\" ", (ent->xp % 2000), ent->plevel
+		);
+		*/
+	/*Com_sprintf(string, sizeof(string),
+		"xv 202 yv 12 string2 \"hi\"");
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+	gi.unicast(ent, true);
+	*/
+	//gi.cprintf(ent, PRINT_ALERT, "%i/200: level %i\n\n\n", ent->xp, ent->plevel);
+	//gi.dprintf("well i mean we made it here?");
+
+
+	/*ent->client->showinventory = false;
+	ent->client->showscores = false;
+
+	if (ent->client->showCustomUI && (ent->client->pers.game_helpchanged == game.helpchanged))
+	{
+		ent->client->showCustomUI = false;
+		return;
+	}
+
+	ent->client->showCustomUI = true;
+	ent->client->pers.helpchanged = 0;
+	
+	if (!ent || !ent->client) return;
+	//char* arg;
+	//arg = gi.args();
+	char	string[1024];
+	char* sk = "MEGISTUS";
+	char* message1 = "BEHOLD! THE WIZARD ARRIVES", * message2 = "USE YOUR RESOURCES WISELY.\n YOU HAVE SPELLS LEVELS 1-5";
+	char* message3 = "1-9 FOR COMBAT, KEYSTROKES t-o\nFOR UTILITY & g-l FOR SUMMONS";
+
+	//gi.cprintf(ent, PRINT_HIGH, "cprintf%s\n");
+
+	Com_sprintf(string, sizeof(string),
+		// background
+		"xv 202 yv 0 string2 \"xp: %i/200 level: %i \" ", ent->xp, ent->plevel
+		);
+
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+	gi.unicast(ent, true);
+	*/
+
+	if (ent->client->showCustomUI) {
+		Cmd_whelp_f(ent);
+	}
+}
